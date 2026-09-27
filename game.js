@@ -1,6 +1,6 @@
 /**
  * A REVOLTA DAS GALINHAS (Chicken's Revenge)
- * Tributo Espiritual ao clássico Chuckie Egg (1984)
+ * Tributo Espiritual aos clássicos de plataformas Arcade de 1984
  * Motor HTML5 Canvas Retro com física estilo 8-bit, 3 Níveis, Elevadores, Menus Retro e Áudio Procedural.
  */
 
@@ -18,7 +18,7 @@ const DEFAULT_SCORES = [
   { name: "PIU", score: 12000 },
   { name: "NOSTALGIA", score: 10000 },
   { name: "PINTAINHO", score: 8500 },
-  { name: "HARRY_H", score: 6800 },
+  { name: "AGRICULT", score: 6800 },
   { name: "BOBI_REX", score: 5200 },
   { name: "OVINHO", score: 3500 },
   { name: "GALINHEIRO", score: 2000 }
@@ -225,6 +225,7 @@ function setupInput() {
       }
     }
 
+    if (["arrowup", "arrowdown", "arrowleft", "arrowright", " ", "space"].includes(k)) { e.preventDefault(); }
     if (k === "o" || k === "arrowleft") keys.left = true;
     if (k === "p" || k === "arrowright" || k === "d") keys.right = true;
     if (k === "q" || k === "arrowup" || k === "w") keys.up = true;
@@ -604,7 +605,7 @@ const levels = [
     ]
   },
 
-  // === NÍVEL 2: AS GRANDES ESCADAS (Baseado na Imagem 5 / Chuckie Egg Nível 2) ===
+  // === NÍVEL 2: AS GRANDES ESCADAS (Baseado na Imagem 5 / Arcade 1984 Nível 2) ===
   // Apresenta escadas longas que atravessam múltiplos pisos com desembarques intermédios!
   {
     name: "NÍVEL 02: AS GRANDES ESCADAS",
@@ -670,7 +671,7 @@ const levels = [
     ]
   },
 
-  // === NÍVEL 3: O POÇO DOS ELEVADORES (Baseado na 1ª Imagem / Chuckie Egg Nível 3) ===
+  // === NÍVEL 3: O POÇO DOS ELEVADORES (Baseado na 1ª Imagem / Arcade 1984 Nível 3) ===
   // Apresenta poço central com elevadores contínuos verticais (um a subir, outro a descer)!
   {
     name: "NÍVEL 03: O POÇO DOS ELEVADORES",
@@ -1547,7 +1548,7 @@ function drawCorn(c, x, y) {
   c.restore();
 }
 
-// --- ECRÃ 1: MENU DE ENTRADA RETRO (Fiel ao Chuckie Egg 1984 - Imagens 1 e 3) ---
+// --- ECRÃ 1: MENU DE ENTRADA RETRO (Fiel ao Arcade 1984 - Imagens 1 e 3) ---
 function drawTitleScreen(c) {
   c.fillStyle = "#000000";
   c.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -1564,16 +1565,16 @@ function drawTitleScreen(c) {
 
   c.fillStyle = "#ba68c8";
   c.fillText("(C) 1984 - 2026", 50, 160);
-  c.fillText("A&F / TRIBUTO RETRO", 50, 190);
+  c.fillText("TRIBUTO JOGOS ARCADE", 50, 190);
 
   c.fillStyle = "#81c784";
   c.fillText("UM JOGO DE PERICIA", 50, 240);
   c.fillText("PARA 1 JOGADOR", 50, 270);
 
   c.fillStyle = "#b0bec5";
-  c.fillText("Escrito em homenagem a:", 50, 330);
+  c.fillText("Dedicado aos classicos:", 50, 330);
   c.fillStyle = "#e0e0e0";
-  c.fillText("Nigel Alderton (1984)", 50, 355);
+  c.fillText("Arcade 8-Bit (1984)", 50, 355);
 
   c.fillStyle = "#ffb74d";
   c.fillText("CONTROLOS:", 50, 410);
@@ -1645,8 +1646,8 @@ function drawInstructionsScreen(c) {
   let y = 130;
   const lh = 22;
 
-  c.fillText("Durante decadas, o infame fazendeiro Henhouse Harry", 50, y); y += lh;
-  c.fillText("roubou milhoes de ovos para fazer fortunas nos anos 80.", 50, y); y += lh;
+  c.fillText("Durante decadas, os agricultores da quinta", 50, y); y += lh;
+  c.fillText("roubaram os ovos do celeiro nos anos 80.", 50, y); y += lh;
   
   c.fillStyle = "#ffff00";
   c.fillText("AGORA, A PACIÊNCIA DAS GALINHAS ACABOU!", 50, y); y += lh + 6;
@@ -1672,7 +1673,7 @@ function drawInstructionsScreen(c) {
   c.fillStyle = "#1e88e5"; c.fillRect(-5, -2, 10, 8);
   c.restore();
   c.fillStyle = "#ef5350";
-  c.fillText("HARRY: Não saltes por cima dele — ele apanha-te sempre!", 85, y); y += lh + 6;
+  c.fillText("AGRICULTORES: Nao saltes por cima - eles apanham-te sempre!", 85, y); y += lh + 6;
 
   // Elevador (Nível 3)
   c.fillStyle = "#ff6f00";
@@ -1860,7 +1861,7 @@ function update(dt) {
           break;
         }
 
-        // B. Tentativa de saltar por cima no mesmo piso (regra Chuckie Egg):
+        // B. Tentativa de saltar por cima no mesmo piso (regra Arcade 1984):
         // Se a Piu tentar passar em salto por cima da cabeça do Harry na mesma plataforma
         const feetDiff = (h.y + h.h) - (piu.y + piu.h);
         if (feetDiff >= 0 && feetDiff < 42) {
