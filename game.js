@@ -13,7 +13,9 @@ const CANVAS_HEIGHT = 600;
 canvas.width = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
 
-// --- SISTEMA DE RECORDES (HIGH SCORES) ---
+// --- SISTEMA DE RECORDES GLOBAIS (VPS testeweb.site + LOCAL FALLBACK) ---
+const LEADERBOARD_API = "https://testeweb.site/api/galinhas/scores";
+
 const DEFAULT_SCORES = [
   { name: "PIU", score: 12000 },
   { name: "NOSTALGIA", score: 10000 },
@@ -24,11 +26,15 @@ const DEFAULT_SCORES = [
   { name: "GALINHEIRO", score: 2000 }
 ];
 
+let cachedHighScores = null;
+let lastSyncTime = 0;
 
 function sanitizeHighScores(list) {
+  if (!Array.isArray(list)) return [...DEFAULT_SCORES];
   return list.map(s => {
-    if (s.name === "HARRY_H" || s.name === "HARRY") s.name = "AGRICULT";
-    return s;
+    let name = String(s.name || "PINTAINHO").toUpperCase().slice(0, 8);
+    if (name === "HARRY_H" || name === "HARRY") name = "AGRICULT";
+    return { name, score: parseInt(s.score, 10) || 0 };
   });
 }
 
@@ -54,11 +60,42 @@ function closeHighScoreModal() {
 }
 
 function loadHighScores() {
+  if (cachedHighScores && cachedHighScores.length > 0) {
+    return cachedHighScores;
+  }
   try {
     const saved = localStorage.getItem("revolta_highscores");
-    if (saved) return sanitizeHighScores(JSON.parse(saved));
+    if (saved) {
+      cachedHighScores = sanitizeHighScores(JSON.parse(saved));
+      return cachedHighScores;
+    }
   } catch(e) {}
-  return [...DEFAULT_SCORES];
+  cachedHighScores = [...DEFAULT_SCORES];
+  return cachedHighScores;
+}
+
+// Sincronização Global com o Servidor VPS
+async function syncGlobalHighScores() {
+  try {
+    const res = await fetch(LEADERBOARD_API, { method: "GET" });
+    if (res.ok) {
+      const serverList = await res.json();
+      if (Array.isArray(serverList) && serverList.length > 0) {
+        cachedHighScores = sanitizeHighScores(serverList);
+        localStorage.setItem("revolta_highscores", JSON.stringify(cachedHighScores));
+      }
+    }
+  } catch(e) {
+    console.warn("Placar global offline, a usar local:", e);
+  }
+}
+
+function requestSyncHighScores() {
+  const now = Date.now();
+  if (now - lastSyncTime > 10000) { // Atualiza no máximo uma vez a cada 10s
+    lastSyncTime = now;
+    syncGlobalHighScores();
+  }
 }
 
 let playerNameInput = "";
@@ -70,22 +107,44 @@ function checkIfHighScore(finalScore) {
   return finalScore > list[list.length - 1].score;
 }
 
-function submitHighScore() {
+async function submitHighScore() {
   const hsInput = document.getElementById("hs-input");
   const entered = (hsInput && hsInput.value.trim()) || playerNameInput.trim() || "PINTAINHO";
   const finalName = entered.toUpperCase().slice(0, 8);
+
+  // 1. Atualização imediata local (feedback instantâneo)
   try {
     const list = loadHighScores();
     list.push({ name: finalName, score });
     list.sort((a, b) => b.score - a.score);
-    localStorage.setItem("revolta_highscores", JSON.stringify(list.slice(0, 7)));
+    cachedHighScores = sanitizeHighScores(list.slice(0, 7));
+    localStorage.setItem("revolta_highscores", JSON.stringify(cachedHighScores));
   } catch(e) {}
+
   playerNameInput = "";
   closeHighScoreModal();
   gameState = "TITLE";
+
+  // 2. Gravação e sincronização na VPS
+  try {
+    const res = await fetch(LEADERBOARD_API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: finalName, score })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data && Array.isArray(data.scores)) {
+        cachedHighScores = sanitizeHighScores(data.scores);
+        localStorage.setItem("revolta_highscores", JSON.stringify(cachedHighScores));
+      }
+    }
+  } catch(e) {
+    console.warn("Falha ao registar recorde na VPS:", e);
+  }
 }
 
-// --- SISTEMA DE ÁUDIO 8-BIT PROCEDURAL (Web Audio API) ---
+// --- SISTEMA DE ÁUDIO 8-BIT PROCEDURAL ---
 class RetroAudio {
   constructor() {
     this.ctx = null;
@@ -2204,6 +2263,7 @@ function drawCorn(c, x, y) {
 
 // --- ECRÃ 1: MENU DE ENTRADA RETRO (Fiel ao Arcade 1984 - Imagens 1 e 3) ---
 function drawTitleScreen(c) {
+  requestSyncHighScores();
   c.fillStyle = "#000000";
   c.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
@@ -2779,6 +2839,7 @@ function gameLoop(timestamp) {
 
 // Iniciar Motor e Controlos
 setupInput();
+syncGlobalHighScores();
 
   document.getElementById("hs-submit-btn")?.addEventListener("click", () => {
     submitHighScore();
