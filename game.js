@@ -39,6 +39,7 @@ function sanitizeHighScores(list) {
 }
 
 function openHighScoreModal() {
+  isSubmittingScore = false;
   playerNameInput = "";
   const modal = document.getElementById("highscore-modal");
   const scoreTxt = document.getElementById("hs-score-text");
@@ -58,6 +59,7 @@ function closeHighScoreModal() {
   if (modal) modal.classList.add("hidden");
   const input = document.getElementById("hs-input");
   if (input) input.blur();
+  setTimeout(() => { isSubmittingScore = false; }, 500);
 }
 
 function loadHighScores() {
@@ -100,6 +102,7 @@ function requestSyncHighScores() {
 }
 
 let playerNameInput = "";
+let isSubmittingScore = false;
 
 function checkIfHighScore(finalScore) {
   if (finalScore <= 0) return false;
@@ -109,6 +112,8 @@ function checkIfHighScore(finalScore) {
 }
 
 async function submitHighScore() {
+  if (isSubmittingScore) return;
+  isSubmittingScore = true;
   const hsInput = document.getElementById("hs-input");
   const entered = (hsInput && hsInput.value.trim()) || playerNameInput.trim();
   const finalName = (entered || "PINTAINHO").toUpperCase().slice(0, 8);
@@ -616,12 +621,7 @@ function tryEnterFullscreen() {
       playerNameInput = e.target.value.toUpperCase().slice(0, 8);
       e.target.value = playerNameInput;
     });
-    hsInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        submitHighScore();
-      }
-    });
+
   }
 
   const mobInp = document.getElementById("mobile-name-input");
@@ -2871,12 +2871,7 @@ syncGlobalHighScores();
   document.getElementById("hs-submit-btn")?.addEventListener("click", () => {
     submitHighScore();
   });
-  document.getElementById("hs-input")?.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      submitHighScore();
-    }
-  });
+
 
 
   // --- PAUSA POR TOQUE NO ECRÃ (TIPO VÍDEO) E AUTO-PAUSA ---
