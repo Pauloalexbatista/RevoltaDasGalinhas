@@ -764,6 +764,428 @@ const levels = [
       { x: 660, y: 366, collected: false },
       { x: 220, y: 86,  collected: false }
     ]
+  },
+  // === NÍVEL 4: A ESTRUTURA EM PIRÂMIDE ===
+  {
+    name: "NÍVEL 04: A ESTRUTURA EM PIRÂMIDE",
+    platforms: [
+      { x: 30, y: 560, w: 740, h: 12 },
+      { x: 60, y: 470, w: 280, h: 10 },
+      { x: 460, y: 470, w: 280, h: 10 },
+      { x: 120, y: 380, w: 240, h: 10 },
+      { x: 440, y: 380, w: 240, h: 10 },
+      { x: 180, y: 290, w: 200, h: 10 },
+      { x: 420, y: 290, w: 200, h: 10 },
+      { x: 230, y: 200, w: 150, h: 10 },
+      { x: 420, y: 200, w: 150, h: 10 },
+      { x: 300, y: 110, w: 200, h: 10 },
+      { x: 40, y: 180, w: 120, h: 10 }
+    ],
+    ladders: [
+      { x: 100, y: 470, w: 24, h: 90 },
+      { x: 670, y: 470, w: 24, h: 90 },
+      { x: 160, y: 380, w: 24, h: 90 },
+      { x: 610, y: 380, w: 24, h: 90 },
+      { x: 220, y: 290, w: 24, h: 90 },
+      { x: 550, y: 290, w: 24, h: 90 },
+      { x: 280, y: 200, w: 24, h: 90 },
+      { x: 490, y: 200, w: 24, h: 90 },
+      { x: 340, y: 110, w: 24, h: 90 },
+      { x: 440, y: 110, w: 24, h: 90 },
+      { x: 60,  y: 180, w: 24, h: 290 }
+    ],
+    kennel: { x: 40, y: 112, w: 68, h: 68 },
+    elevators: [],
+    harrys: [
+      { x: 200, y: 470 - 32, dir: 1 },
+      { x: 550, y: 380 - 32, dir: -1 },
+      { x: 300, y: 290 - 32, dir: 1 }
+    ],
+    eggs: [
+      { x: 80,  y: 535, collected: false },
+      { x: 710, y: 535, collected: false },
+      { x: 140, y: 445, collected: false },
+      { x: 640, y: 445, collected: false },
+      { x: 200, y: 355, collected: false },
+      { x: 580, y: 355, collected: false },
+      { x: 260, y: 265, collected: false },
+      { x: 520, y: 265, collected: false },
+      { x: 320, y: 175, collected: false },
+      { x: 460, y: 175, collected: false },
+      { x: 350, y: 85,  collected: false },
+      { x: 450, y: 85,  collected: false }
+    ],
+    corns: [
+      { x: 400, y: 546, collected: false },
+      { x: 140, y: 166, collected: false }
+    ]
+  },
+
+  // === NÍVEL 5: OS SILOS DUPLOS ===
+  {
+    name: "NÍVEL 05: OS SILOS DUPLOS",
+    platforms: [
+      { x: 30, y: 560, w: 180, h: 12 },
+      { x: 280, y: 560, w: 240, h: 12 },
+      { x: 590, y: 560, w: 180, h: 12 },
+      { x: 40, y: 470, w: 170, h: 10 },
+      { x: 290, y: 470, w: 220, h: 10 },
+      { x: 590, y: 470, w: 170, h: 10 },
+      { x: 50, y: 380, w: 160, h: 10 },
+      { x: 280, y: 380, w: 240, h: 10 },
+      { x: 590, y: 380, w: 160, h: 10 },
+      { x: 40, y: 280, w: 170, h: 10 },
+      { x: 300, y: 280, w: 200, h: 10 },
+      { x: 590, y: 280, w: 170, h: 10 },
+      { x: 60, y: 190, w: 150, h: 10 },
+      { x: 280, y: 190, w: 240, h: 10 },
+      { x: 590, y: 190, w: 150, h: 10 },
+      { x: 220, y: 100, w: 360, h: 10 }
+    ],
+    ladders: [
+      { x: 90,  y: 470, w: 24, h: 90 },
+      { x: 400, y: 470, w: 24, h: 90 },
+      { x: 690, y: 470, w: 24, h: 90 },
+      { x: 120, y: 380, w: 24, h: 90 },
+      { x: 340, y: 380, w: 24, h: 90 },
+      { x: 460, y: 380, w: 24, h: 90 },
+      { x: 660, y: 380, w: 24, h: 90 },
+      { x: 90,  y: 280, w: 24, h: 100 },
+      { x: 400, y: 280, w: 24, h: 100 },
+      { x: 690, y: 280, w: 24, h: 100 },
+      { x: 300, y: 100, w: 24, h: 90 },
+      { x: 480, y: 100, w: 24, h: 90 }
+    ],
+    elevators: [
+      { x: 218, y: 490, w: 56, h: 12, vy: -75, type: "up", minY: 80, maxY: 540 },
+      { x: 526, y: 250, w: 56, h: 12, vy: -75, type: "up", minY: 80, maxY: 540 }
+    ],
+    kennel: { x: 50, y: 122, w: 68, h: 68 },
+    harrys: [
+      { x: 100, y: 470 - 32, dir: 1 },
+      { x: 360, y: 380 - 32, dir: -1 },
+      { x: 650, y: 280 - 32, dir: 1 }
+    ],
+    eggs: [
+      { x: 60,  y: 535, collected: false },
+      { x: 400, y: 535, collected: false },
+      { x: 720, y: 535, collected: false },
+      { x: 140, y: 445, collected: false },
+      { x: 660, y: 445, collected: false },
+      { x: 350, y: 355, collected: false },
+      { x: 450, y: 355, collected: false },
+      { x: 80,  y: 255, collected: false },
+      { x: 700, y: 255, collected: false },
+      { x: 330, y: 165, collected: false },
+      { x: 470, y: 165, collected: false },
+      { x: 400, y: 75,  collected: false }
+    ],
+    corns: [
+      { x: 300, y: 546, collected: false },
+      { x: 500, y: 546, collected: false }
+    ]
+  },
+
+  // === NÍVEL 6: A PONTE SUSPENSA ===
+  {
+    name: "NÍVEL 06: A PONTE SUSPENSA",
+    platforms: [
+      { x: 30, y: 560, w: 740, h: 12 },
+      { x: 50,  y: 470, w: 160, h: 10 },
+      { x: 260, y: 470, w: 130, h: 10 },
+      { x: 440, y: 470, w: 130, h: 10 },
+      { x: 620, y: 470, w: 150, h: 10 },
+      { x: 100, y: 380, w: 180, h: 10 },
+      { x: 330, y: 380, w: 160, h: 10 },
+      { x: 540, y: 380, w: 180, h: 10 },
+      { x: 40,  y: 290, w: 220, h: 10 },
+      { x: 310, y: 290, w: 190, h: 10 },
+      { x: 550, y: 290, w: 210, h: 10 },
+      { x: 60,  y: 190, w: 200, h: 10 },
+      { x: 320, y: 190, w: 180, h: 10 },
+      { x: 550, y: 190, w: 190, h: 10 },
+      { x: 200, y: 100, w: 400, h: 10 }
+    ],
+    ladders: [
+      { x: 100, y: 470, w: 24, h: 90 },
+      { x: 680, y: 470, w: 24, h: 90 },
+      { x: 220, y: 380, w: 24, h: 90 },
+      { x: 580, y: 380, w: 24, h: 90 },
+      { x: 120, y: 290, w: 24, h: 90 },
+      { x: 400, y: 290, w: 24, h: 90 },
+      { x: 660, y: 290, w: 24, h: 90 },
+      { x: 180, y: 190, w: 24, h: 100 },
+      { x: 600, y: 190, w: 24, h: 100 },
+      { x: 300, y: 100, w: 24, h: 90 },
+      { x: 500, y: 100, w: 24, h: 90 }
+    ],
+    kennel: { x: 50, y: 122, w: 68, h: 68 },
+    elevators: [],
+    harrys: [
+      { x: 300, y: 470 - 32, dir: 1 },
+      { x: 200, y: 380 - 32, dir: -1 },
+      { x: 400, y: 290 - 32, dir: 1 },
+      { x: 600, y: 190 - 32, dir: -1 }
+    ],
+    eggs: [
+      { x: 60,  y: 535, collected: false },
+      { x: 720, y: 535, collected: false },
+      { x: 300, y: 445, collected: false },
+      { x: 480, y: 445, collected: false },
+      { x: 140, y: 355, collected: false },
+      { x: 400, y: 355, collected: false },
+      { x: 640, y: 355, collected: false },
+      { x: 80,  y: 265, collected: false },
+      { x: 700, y: 265, collected: false },
+      { x: 400, y: 165, collected: false },
+      { x: 260, y: 75,  collected: false },
+      { x: 540, y: 75,  collected: false }
+    ],
+    corns: [
+      { x: 400, y: 446, collected: false },
+      { x: 400, y: 76,  collected: false }
+    ]
+  },
+
+  // === NÍVEL 7: O LABIRINTO DA MOENDA ===
+  {
+    name: "NÍVEL 07: O LABIRINTO DA MOENDA",
+    platforms: [
+      { x: 30, y: 560, w: 740, h: 12 },
+      { x: 40,  y: 470, w: 320, h: 10 },
+      { x: 440, y: 470, w: 320, h: 10 },
+      { x: 40,  y: 390, w: 140, h: 10 },
+      { x: 230, y: 390, w: 160, h: 10 },
+      { x: 440, y: 390, w: 160, h: 10 },
+      { x: 640, y: 390, w: 130, h: 10 },
+      { x: 90,  y: 300, w: 260, h: 10 },
+      { x: 430, y: 300, w: 270, h: 10 },
+      { x: 40,  y: 200, w: 180, h: 10 },
+      { x: 280, y: 200, w: 240, h: 10 },
+      { x: 580, y: 200, w: 180, h: 10 },
+      { x: 150, y: 110, w: 220, h: 10 },
+      { x: 430, y: 110, w: 220, h: 10 }
+    ],
+    ladders: [
+      { x: 120, y: 470, w: 24, h: 90 },
+      { x: 300, y: 470, w: 24, h: 90 },
+      { x: 500, y: 470, w: 24, h: 90 },
+      { x: 680, y: 470, w: 24, h: 90 },
+      { x: 80,  y: 390, w: 24, h: 80 },
+      { x: 270, y: 390, w: 24, h: 80 },
+      { x: 520, y: 390, w: 24, h: 80 },
+      { x: 700, y: 390, w: 24, h: 80 },
+      { x: 160, y: 300, w: 24, h: 90 },
+      { x: 330, y: 300, w: 24, h: 90 },
+      { x: 480, y: 300, w: 24, h: 90 },
+      { x: 620, y: 300, w: 24, h: 90 },
+      { x: 220, y: 110, w: 24, h: 90 },
+      { x: 560, y: 110, w: 24, h: 90 }
+    ],
+    kennel: { x: 40, y: 132, w: 68, h: 68 },
+    elevators: [],
+    harrys: [
+      { x: 180, y: 470 - 32, dir: 1 },
+      { x: 550, y: 470 - 32, dir: -1 },
+      { x: 320, y: 300 - 32, dir: 1 },
+      { x: 380, y: 200 - 32, dir: -1 }
+    ],
+    eggs: [
+      { x: 70,  y: 535, collected: false },
+      { x: 720, y: 535, collected: false },
+      { x: 220, y: 445, collected: false },
+      { x: 580, y: 445, collected: false },
+      { x: 110, y: 365, collected: false },
+      { x: 360, y: 365, collected: false },
+      { x: 460, y: 365, collected: false },
+      { x: 690, y: 365, collected: false },
+      { x: 200, y: 275, collected: false },
+      { x: 580, y: 275, collected: false },
+      { x: 220, y: 85,  collected: false },
+      { x: 540, y: 85,  collected: false }
+    ],
+    corns: [
+      { x: 400, y: 176, collected: false },
+      { x: 400, y: 546, collected: false }
+    ]
+  },
+
+  // === NÍVEL 8: AS PLATAFORMAS FLUTUANTES ===
+  {
+    name: "NÍVEL 08: AS PLATAFORMAS FLUTUANTES",
+    platforms: [
+      { x: 30,  y: 560, w: 300, h: 12 },
+      { x: 470, y: 560, w: 300, h: 12 },
+      { x: 60,  y: 470, w: 200, h: 10 },
+      { x: 330, y: 470, w: 140, h: 10 },
+      { x: 540, y: 470, w: 200, h: 10 },
+      { x: 100, y: 380, w: 200, h: 10 },
+      { x: 500, y: 380, w: 200, h: 10 },
+      { x: 40,  y: 280, w: 190, h: 10 },
+      { x: 310, y: 280, w: 180, h: 10 },
+      { x: 570, y: 280, w: 190, h: 10 },
+      { x: 120, y: 190, w: 220, h: 10 },
+      { x: 460, y: 190, w: 220, h: 10 },
+      { x: 280, y: 100, w: 240, h: 10 }
+    ],
+    ladders: [
+      { x: 120, y: 470, w: 24, h: 90 },
+      { x: 660, y: 470, w: 24, h: 90 },
+      { x: 180, y: 380, w: 24, h: 90 },
+      { x: 580, y: 380, w: 24, h: 90 },
+      { x: 90,  y: 280, w: 24, h: 100 },
+      { x: 680, y: 280, w: 24, h: 100 },
+      { x: 220, y: 190, w: 24, h: 90 },
+      { x: 540, y: 190, w: 24, h: 90 },
+      { x: 340, y: 100, w: 24, h: 90 },
+      { x: 440, y: 100, w: 24, h: 90 }
+    ],
+    elevators: [
+      { x: 372, y: 510, w: 56, h: 12, vy: -80, type: "up", minY: 70, maxY: 550 }
+    ],
+    kennel: { x: 40, y: 212, w: 68, h: 68 },
+    harrys: [
+      { x: 180, y: 470 - 32, dir: 1 },
+      { x: 600, y: 470 - 32, dir: -1 },
+      { x: 160, y: 280 - 32, dir: 1 },
+      { x: 620, y: 280 - 32, dir: -1 }
+    ],
+    eggs: [
+      { x: 60,  y: 535, collected: false },
+      { x: 720, y: 535, collected: false },
+      { x: 120, y: 445, collected: false },
+      { x: 400, y: 445, collected: false },
+      { x: 660, y: 445, collected: false },
+      { x: 160, y: 355, collected: false },
+      { x: 620, y: 355, collected: false },
+      { x: 80,  y: 255, collected: false },
+      { x: 400, y: 255, collected: false },
+      { x: 700, y: 255, collected: false },
+      { x: 260, y: 165, collected: false },
+      { x: 520, y: 165, collected: false }
+    ],
+    corns: [
+      { x: 400, y: 76,  collected: false },
+      { x: 200, y: 546, collected: false }
+    ]
+  },
+
+  // === NÍVEL 9: O MOINHO VERTICAL ===
+  {
+    name: "NÍVEL 09: O MOINHO VERTICAL",
+    platforms: [
+      { x: 30, y: 560, w: 740, h: 12 },
+      { x: 40,  y: 470, w: 250, h: 10 },
+      { x: 360, y: 470, w: 320, h: 10 },
+      { x: 120, y: 380, w: 340, h: 10 },
+      { x: 530, y: 380, w: 230, h: 10 },
+      { x: 40,  y: 290, w: 260, h: 10 },
+      { x: 370, y: 290, w: 320, h: 10 },
+      { x: 120, y: 200, w: 330, h: 10 },
+      { x: 520, y: 200, w: 240, h: 10 },
+      { x: 200, y: 110, w: 400, h: 10 }
+    ],
+    ladders: [
+      { x: 100, y: 470, w: 24, h: 90 },
+      { x: 460, y: 470, w: 24, h: 90 },
+      { x: 220, y: 380, w: 24, h: 90 },
+      { x: 620, y: 380, w: 24, h: 90 },
+      { x: 140, y: 290, w: 24, h: 90 },
+      { x: 500, y: 290, w: 24, h: 90 },
+      { x: 260, y: 200, w: 24, h: 90 },
+      { x: 660, y: 200, w: 24, h: 90 },
+      { x: 350, y: 110, w: 24, h: 90 },
+      { x: 450, y: 110, w: 24, h: 90 }
+    ],
+    elevators: [
+      { x: 700, y: 500, w: 56, h: 12, vy: -75, type: "up", minY: 100, maxY: 550 }
+    ],
+    kennel: { x: 40, y: 222, w: 68, h: 68 },
+    harrys: [
+      { x: 160, y: 470 - 32, dir: 1 },
+      { x: 480, y: 380 - 32, dir: -1 },
+      { x: 200, y: 290 - 32, dir: 1 },
+      { x: 580, y: 200 - 32, dir: -1 }
+    ],
+    eggs: [
+      { x: 60,  y: 535, collected: false },
+      { x: 550, y: 535, collected: false },
+      { x: 180, y: 445, collected: false },
+      { x: 600, y: 445, collected: false },
+      { x: 240, y: 355, collected: false },
+      { x: 420, y: 355, collected: false },
+      { x: 700, y: 355, collected: false },
+      { x: 100, y: 265, collected: false },
+      { x: 560, y: 265, collected: false },
+      { x: 320, y: 175, collected: false },
+      { x: 300, y: 85,  collected: false },
+      { x: 500, y: 85,  collected: false }
+    ],
+    corns: [
+      { x: 600, y: 176, collected: false },
+      { x: 250, y: 546, collected: false }
+    ]
+  },
+
+  // === NÍVEL 10: O GRANDE ARMAZÉM REAL ===
+  {
+    name: "NÍVEL 10: O GRANDE ARMAZÉM REAL",
+    platforms: [
+      { x: 30,  y: 560, w: 310, h: 12 },
+      { x: 426, y: 560, w: 344, h: 12 },
+      { x: 40,  y: 470, w: 290, h: 10 },
+      { x: 426, y: 470, w: 334, h: 10 },
+      { x: 80,  y: 380, w: 250, h: 10 },
+      { x: 426, y: 380, w: 300, h: 10 },
+      { x: 40,  y: 280, w: 290, h: 10 },
+      { x: 426, y: 280, w: 334, h: 10 },
+      { x: 60,  y: 190, w: 270, h: 10 },
+      { x: 426, y: 190, w: 270, h: 10 },
+      { x: 140, y: 100, w: 190, h: 10 },
+      { x: 426, y: 100, w: 230, h: 10 }
+    ],
+    ladders: [
+      { x: 100, y: 470, w: 24, h: 90 },
+      { x: 680, y: 470, w: 24, h: 90 },
+      { x: 180, y: 380, w: 24, h: 90 },
+      { x: 580, y: 380, w: 24, h: 90 },
+      { x: 120, y: 280, w: 24, h: 100 },
+      { x: 640, y: 280, w: 24, h: 100 },
+      { x: 220, y: 190, w: 24, h: 90 },
+      { x: 520, y: 190, w: 24, h: 90 },
+      { x: 260, y: 100, w: 24, h: 90 },
+      { x: 480, y: 100, w: 24, h: 90 }
+    ],
+    elevators: [
+      { x: 352, y: 530, w: 58, h: 12, vy: -75, type: "up", minY: 60, maxY: 550 },
+      { x: 352, y: 290, w: 58, h: 12, vy: -75, type: "up", minY: 60, maxY: 550 }
+    ],
+    kennel: { x: 50, y: 122, w: 68, h: 68 },
+    harrys: [
+      { x: 160, y: 470 - 32, dir: 1 },
+      { x: 600, y: 470 - 32, dir: -1 },
+      { x: 200, y: 280 - 32, dir: -1 },
+      { x: 560, y: 190 - 32, dir: 1 }
+    ],
+    eggs: [
+      { x: 60,  y: 535, collected: false },
+      { x: 720, y: 535, collected: false },
+      { x: 160, y: 445, collected: false },
+      { x: 620, y: 445, collected: false },
+      { x: 120, y: 355, collected: false },
+      { x: 680, y: 355, collected: false },
+      { x: 80,  y: 255, collected: false },
+      { x: 600, y: 255, collected: false },
+      { x: 200, y: 165, collected: false },
+      { x: 500, y: 165, collected: false },
+      { x: 200, y: 75,  collected: false },
+      { x: 550, y: 75,  collected: false }
+    ],
+    corns: [
+      { x: 280, y: 446, collected: false },
+      { x: 480, y: 446, collected: false },
+      { x: 220, y: 76,  collected: false }
+    ]
   }
 ];
 

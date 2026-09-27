@@ -38,6 +38,18 @@ O jogador controla **Piu**, uma galinha destemida que se infiltra nos armazéns 
 
 ---
 
+### Catálogo Oficial dos 10 Níveis Arcade:
+1. **Nível 01: O Celeiro Inferior** — O clássico de introdução equilibrado com 3 agricultores e casota superior.
+2. **Nível 02: As Grandes Escadas** — Escadas compridas que atravessam múltiplos pisos com desembarques intermédios.
+3. **Nível 03: O Poço dos Elevadores** — Poço central com elevadores contínuos a subir e morte no vazio.
+4. **Nível 04: A Estrutura em Pirâmide** — Plataformas convergentes em pirâmide e escadas diagonais escalonadas.
+5. **Nível 05: Os Silos Duplos** — Dois poços de elevador verticais e torre central com ovos dourados.
+6. **Nível 06: A Ponte Suspensa** — Vigas recortadas com saltos abertos e ilhas flutuantes suspensas.
+7. **Nível 07: O Labirinto da Moenda** — Nível labiríntico denso com 14 escadas e 4 agricultores em patrulha.
+8. **Nível 08: As Plataformas Flutuantes** — Saltos milimétricos no ar com poço aberto na base e elevador central veloz.
+9. **Nível 09: O Moinho Vertical** — Arquitetura assimétrica com escadas ultra-longas e elevador exterior.
+10. **Nível 10: O Grande Armazém Real** — O clímax do celeiro, combinando elevadores duplos, 4 agricultores e 12 ovos nas extremidades.
+
 ## 4. Controlos: Teclado vs Mobile (A Solução Perfeita)
 
 ### A. No PC (Teclado - Autêntico Timex 48K):
