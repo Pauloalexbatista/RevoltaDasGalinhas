@@ -1373,7 +1373,7 @@ function drawTitleScreen(c) {
   c.fillText("A&F / TRIBUTO RETRO", 50, 190);
 
   c.fillStyle = "#81c784";
-  c.fillText("UM JOGO DE PERÍCIA", 50, 240);
+  c.fillText("UM JOGO DE PERICIA", 50, 240);
   c.fillText("PARA 1 JOGADOR", 50, 270);
 
   c.fillStyle = "#b0bec5";
@@ -1422,12 +1422,12 @@ function drawTitleScreen(c) {
   // Frase Principal: Ouro suave fixo, sem alternar nem piscar depressa
   c.fillStyle = "#ffeb3b";
   c.font = "12px 'Press Start 2P', monospace";
-  c.fillText("★   PRESSIONA  [ESPAÇO]  OU  TOCA  PARA  JOGAR   ★", CANVAS_WIDTH / 2, 534);
+  c.fillText("★   PRESSIONA [ESPACO] OU TOCA PARA JOGAR   ★", CANVAS_WIDTH / 2, 534);
 
   // Sub-legenda com espaçamento desafogado
   c.fillStyle = "#80deea";
   c.font = "9px 'Press Start 2P', monospace";
-  c.fillText("[I] INSTRUÇÕES     •     [M] SOM     •     [CRT] SCANLINES", CANVAS_WIDTH / 2, 568);
+  c.fillText("[I] INSTRUCOES     -     [M] SOM     -     [CRT] SCANLINES", CANVAS_WIDTH / 2, 568);
 }
 
 // --- ECRÃ 2: INSTRUÇÕES RETRO (Fiel à Imagem 2 com o texto do GDD) ---
@@ -1442,7 +1442,7 @@ function drawInstructionsScreen(c) {
 
   c.font = "12px 'Press Start 2P', monospace";
   c.fillStyle = "#ba68c8";
-  c.fillText("INSTRUÇÕES & HISTÓRIA (1984 - 2026)", CANVAS_WIDTH / 2, 85);
+  c.fillText("INSTRUCOES & HISTORIA (1984 - 2026)", CANVAS_WIDTH / 2, 85);
 
   c.textAlign = "left";
   c.font = "9px 'Press Start 2P', monospace";
@@ -1451,8 +1451,8 @@ function drawInstructionsScreen(c) {
   let y = 130;
   const lh = 22;
 
-  c.fillText("Durante décadas, o infame fazendeiro Henhouse Harry", 50, y); y += lh;
-  c.fillText("roubou milhões de ovos para fazer fortunas nos anos 80.", 50, y); y += lh;
+  c.fillText("Durante decadas, o infame fazendeiro Henhouse Harry", 50, y); y += lh;
+  c.fillText("roubou milhoes de ovos para fazer fortunas nos anos 80.", 50, y); y += lh;
   
   c.fillStyle = "#ffff00";
   c.fillText("AGORA, A PACIÊNCIA DAS GALINHAS ACABOU!", 50, y); y += lh + 6;
@@ -1464,7 +1464,7 @@ function drawInstructionsScreen(c) {
   // Mini-tabela com Sprites
   drawEgg(c, 50, y - 10);
   c.fillStyle = "#ffd54f";
-  c.fillText("OVOS: Resgata os 12 ovos para concluir o nível (+100 pts).", 85, y); y += lh + 6;
+  c.fillText("OVOS: Resgata os 12 ovos para concluir o nivel (+100 pts).", 85, y); y += lh + 6;
 
   drawCorn(c, 50, y - 8);
   c.fillStyle = "#ffb300";
