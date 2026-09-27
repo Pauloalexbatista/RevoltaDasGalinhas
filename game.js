@@ -39,6 +39,7 @@ function sanitizeHighScores(list) {
 }
 
 function openHighScoreModal() {
+  playerNameInput = "";
   const modal = document.getElementById("highscore-modal");
   const scoreTxt = document.getElementById("hs-score-text");
   const input = document.getElementById("hs-input");
@@ -109,8 +110,8 @@ function checkIfHighScore(finalScore) {
 
 async function submitHighScore() {
   const hsInput = document.getElementById("hs-input");
-  const entered = (hsInput && hsInput.value.trim()) || playerNameInput.trim() || "PINTAINHO";
-  const finalName = entered.toUpperCase().slice(0, 8);
+  const entered = (hsInput && hsInput.value.trim()) || playerNameInput.trim();
+  const finalName = (entered || "PINTAINHO").toUpperCase().slice(0, 8);
 
   // 1. Atualização imediata local (feedback instantâneo)
   try {
@@ -264,6 +265,15 @@ const keys = {
 
 function setupInput() {
   window.addEventListener("keydown", (e) => {
+    // Se o utilizador estiver focado numa caixa de texto (<input>), deixa o teclado funcionar normalmente
+    if (e.target && e.target.tagName === "INPUT") {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        submitHighScore();
+      }
+      return;
+    }
+
     audio.init();
     const k = e.key.toLowerCase();
     
@@ -283,22 +293,21 @@ function setupInput() {
         return;
       }
     } else if (gameState === "NEW_RECORD") {
+      const hsInp = document.getElementById("hs-input");
       if (e.key === "Enter") {
         submitHighScore();
         return;
       }
       if (e.key === "Backspace") {
         playerNameInput = playerNameInput.slice(0, -1);
-        const mobInp = document.getElementById("mobile-name-input");
-        if (mobInp) mobInp.value = playerNameInput;
+        if (hsInp) hsInp.value = playerNameInput;
         e.preventDefault();
         return;
       }
       if (e.key.length === 1 && /[a-zA-Z0-9_\- ]/.test(e.key)) {
         if (playerNameInput.length < 8) {
           playerNameInput += e.key.toUpperCase();
-          const mobInp = document.getElementById("mobile-name-input");
-          if (mobInp) mobInp.value = playerNameInput;
+          if (hsInp) hsInp.value = playerNameInput;
         }
         e.preventDefault();
         return;
@@ -600,14 +609,25 @@ function tryEnterFullscreen() {
     }
   });
 
-  // Sincronizar input móvel
+  // Sincronizar input de recordes (PC e Mobile)
+  const hsInput = document.getElementById("hs-input");
+  if (hsInput) {
+    hsInput.addEventListener("input", (e) => {
+      playerNameInput = e.target.value.toUpperCase().slice(0, 8);
+      e.target.value = playerNameInput;
+    });
+    hsInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        submitHighScore();
+      }
+    });
+  }
+
   const mobInp = document.getElementById("mobile-name-input");
   if (mobInp) {
     mobInp.addEventListener("input", (e) => {
       playerNameInput = e.target.value.toUpperCase().slice(0, 8);
-    });
-    mobInp.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") submitHighScore();
     });
   }
 }
