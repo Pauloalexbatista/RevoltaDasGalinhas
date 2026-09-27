@@ -24,10 +24,39 @@ const DEFAULT_SCORES = [
   { name: "GALINHEIRO", score: 2000 }
 ];
 
+
+function sanitizeHighScores(list) {
+  return list.map(s => {
+    if (s.name === "HARRY_H" || s.name === "HARRY") s.name = "AGRICULT";
+    return s;
+  });
+}
+
+function openHighScoreModal() {
+  const modal = document.getElementById("highscore-modal");
+  const scoreTxt = document.getElementById("hs-score-text");
+  const input = document.getElementById("hs-input");
+  if (modal) {
+    modal.classList.remove("hidden");
+    if (scoreTxt) scoreTxt.innerText = "SCORE: " + String(score).padStart(6, "0");
+    if (input) {
+      input.value = "";
+      setTimeout(() => input.focus(), 100);
+    }
+  }
+}
+
+function closeHighScoreModal() {
+  const modal = document.getElementById("highscore-modal");
+  if (modal) modal.classList.add("hidden");
+  const input = document.getElementById("hs-input");
+  if (input) input.blur();
+}
+
 function loadHighScores() {
   try {
     const saved = localStorage.getItem("revolta_highscores");
-    if (saved) return JSON.parse(saved);
+    if (saved) return sanitizeHighScores(JSON.parse(saved));
   } catch(e) {}
   return [...DEFAULT_SCORES];
 }
@@ -42,7 +71,9 @@ function checkIfHighScore(finalScore) {
 }
 
 function submitHighScore() {
-  const finalName = (playerNameInput.trim() || "PINTAINHO").toUpperCase().slice(0, 8);
+  const hsInput = document.getElementById("hs-input");
+  const entered = (hsInput && hsInput.value.trim()) || playerNameInput.trim() || "PINTAINHO";
+  const finalName = entered.toUpperCase().slice(0, 8);
   try {
     const list = loadHighScores();
     list.push({ name: finalName, score });
@@ -50,11 +81,7 @@ function submitHighScore() {
     localStorage.setItem("revolta_highscores", JSON.stringify(list.slice(0, 7)));
   } catch(e) {}
   playerNameInput = "";
-  const mobInp = document.getElementById("mobile-name-input");
-  if (mobInp) {
-    mobInp.value = "";
-    mobInp.blur();
-  }
+  closeHighScoreModal();
   gameState = "TITLE";
 }
 
@@ -824,6 +851,7 @@ const levels = [
   // === NÍVEL 5: OS SILOS DUPLOS ===
   {
     name: "NÍVEL 05: OS SILOS DUPLOS",
+    playerSpawn: { x: 380, y: 532 },
     platforms: [
       { x: 30, y: 560, w: 180, h: 12 },
       { x: 280, y: 560, w: 240, h: 12 },
@@ -1195,11 +1223,11 @@ class ChickenPlayer {
     this.reset();
   }
 
-  reset() {
+  reset(x = 240, y = 532) {
     this.w = 26;
     this.h = 28;
-    this.x = 240;
-    this.y = 532;
+    this.x = x;
+    this.y = y;
     this.vx = 0;
     this.vy = 0;
     this.facing = 1;
@@ -2042,7 +2070,9 @@ function loadLevel(idx) {
   guardDog.reset(currentLevel.kennel.x + 10, currentLevel.kennel.y + 20);
 
   // Resetar Piu
-  piu.reset();
+  const spX = (currentLevel.playerSpawn && currentLevel.playerSpawn.x) || 240;
+  const spY = (currentLevel.playerSpawn && currentLevel.playerSpawn.y) || 532;
+  piu.reset(spX, spY);
 
   timeRemaining = 999;
   timerFrozenRemaining = 0;
@@ -2517,6 +2547,7 @@ function triggerLifeLost() {
         gameState = "NEW_RECORD";
         playerNameInput = "";
         audio.levelWin();
+        openHighScoreModal();
         const mobInp = document.getElementById("mobile-name-input");
         if (mobInp) {
           mobInp.value = "";
@@ -2748,6 +2779,17 @@ function gameLoop(timestamp) {
 
 // Iniciar Motor e Controlos
 setupInput();
+
+  document.getElementById("hs-submit-btn")?.addEventListener("click", () => {
+    submitHighScore();
+  });
+  document.getElementById("hs-input")?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      submitHighScore();
+    }
+  });
+
 
   // --- PAUSA POR TOQUE NO ECRÃ (TIPO VÍDEO) E AUTO-PAUSA ---
   function handleScreenTap(e) {

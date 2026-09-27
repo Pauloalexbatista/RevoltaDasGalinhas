@@ -20,6 +20,18 @@
       <div class="logo">🐔 A REVOLTA DAS GALINHAS</div>
       <div class="subtitle">TRIBUTO AOS JOGOS ARCADE (1984)</div>
     </header>
+        <!-- High Score Input Modal (Desktop & Mobile 100% Reliable) -->
+    <div id="highscore-modal" class="highscore-modal hidden">
+      <div class="hs-card">
+        <div class="hs-header">🏆 NOVO RECORDE! 🏆</div>
+        <div id="hs-score-text" class="hs-score">000000</div>
+        <p class="hs-sub">DIGITA O TEU NOME / INICIAIS:</p>
+        <div class="hs-input-row">
+          <input id="hs-input" type="text" maxlength="8" placeholder="TEU NOME" autocomplete="off" autocapitalize="characters">
+          <button id="hs-submit-btn" type="button">GRAVAR RECORDE</button>
+        </div>
+      </div>
+    </div>
     <input id="mobile-name-input" type="text" maxlength="8" autocomplete="off" autocapitalize="characters" style="position: absolute; opacity: 0; pointer-events: none; left: -9999px;">
 
     <!-- Main Screen Area with Scanlines & CRT curvature -->
