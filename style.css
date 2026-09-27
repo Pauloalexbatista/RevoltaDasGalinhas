@@ -1,31 +1,35 @@
-﻿* {
+* {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
-body {
-  background-color: #0b0c10;
+html, body {
+  width: 100%;
+  height: 100%;
+  min-height: 100dvh;
+  height: 100dvh;
+  background-color: #080811;
   color: #66fcf1;
   font-family: 'Press Start 2P', monospace, sans-serif;
-  min-height: 100vh;
+  overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
 }
 
 #arcade-cabinet {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   width: 100vw;
-  height: 100vh;
-  max-width: 1024px;
+  height: 100dvh;
+  max-width: 960px;
   max-height: 900px;
   position: relative;
   background: radial-gradient(circle at center, #1b1c2e 0%, #080811 100%);
@@ -35,14 +39,41 @@ body {
   padding: 10px;
 }
 
+/* Dica de Rotação */
+.rotate-hint {
+  display: none;
+  background: rgba(255, 214, 0, 0.12);
+  border: 1px solid rgba(255, 214, 0, 0.4);
+  color: #ffd600;
+  font-size: 8px;
+  line-height: 1.4;
+  border-radius: 4px;
+  padding: 5px 8px;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  text-shadow: 0 0 4px rgba(255, 214, 0, 0.5);
+}
+.rotate-hint button {
+  background: none;
+  border: none;
+  color: #ffd600;
+  font-family: inherit;
+  font-size: 10px;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
 #arcade-header {
   text-align: center;
   margin-bottom: 6px;
   width: 100%;
+  flex: none;
 }
 
 #arcade-header .logo {
-  font-size: 16px;
+  font-size: 15px;
   color: #ffeb3b;
   text-shadow: 0 0 8px rgba(255, 235, 59, 0.8), 2px 2px 0px #d84315;
   letter-spacing: 2px;
@@ -114,112 +145,32 @@ body {
   display: none !important;
 }
 
-/* Touch Controls Layout */
-#touch-controls {
-  display: none; /* Shown on touch screens or when screen is small */
-  position: absolute;
-  bottom: 10px;
-  left: 0;
-  width: 100%;
-  height: 140px;
-  pointer-events: none;
-  z-index: 20;
-  padding: 0 15px;
-}
-
-.touch-cluster {
-  pointer-events: auto;
-  position: absolute;
-  bottom: 10px;
-}
-
-.touch-left {
-  left: 15px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.dpad-middle {
-  display: flex;
-  align-items: center;
-}
-
-.dpad-center {
-  width: 44px;
-  height: 44px;
-  background: rgba(30, 35, 60, 0.5);
-}
-
-.dpad-btn {
-  width: 48px;
-  height: 48px;
-  background: rgba(45, 52, 90, 0.85);
-  border: 2px solid #5d75ba;
-  color: #ffffff;
-  font-size: 18px;
-  border-radius: 8px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 4px 0 #181d33;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.dpad-btn:active {
-  background: #ffaa00;
-  color: #000;
-  transform: translateY(2px);
-  box-shadow: 0 2px 0 #181d33;
-}
-
-.touch-right {
-  right: 25px;
-  bottom: 25px;
-}
-
-.action-btn.jump {
-  width: 75px;
-  height: 75px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #ff4b4b, #9b0000);
-  border: 3px solid #ff9999;
-  color: #ffffff;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 10px;
-  font-weight: bold;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 6px 0 #5a0000, 0 8px 15px rgba(255, 0, 0, 0.4);
-  -webkit-tap-highlight-color: transparent;
-}
-
-.action-btn.jump:active {
-  transform: translateY(4px);
-  box-shadow: 0 2px 0 #5a0000, 0 4px 8px rgba(255, 0, 0, 0.4);
-  background: radial-gradient(circle at 30% 30%, #ff7777, #bb1111);
-}
-
+/* Rodapé / Control Hints */
 #arcade-footer {
   width: 100%;
-  margin-top: 8px;
+  margin-top: 6px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 9px;
   color: #a0a8c2;
   padding: 4px 10px;
+  flex: none;
 }
 
 .control-hints {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
   flex-wrap: wrap;
   width: 100%;
   justify-content: space-between;
+}
+
+.footer-buttons {
+  display: flex;
+  gap: 6px;
+  align-items: center;
 }
 
 .retro-btn {
@@ -231,6 +182,7 @@ body {
   padding: 5px 8px;
   cursor: pointer;
   border-radius: 4px;
+  user-select: none;
 }
 
 .retro-btn:hover {
@@ -238,25 +190,251 @@ body {
   color: #ffffff;
 }
 
-/* Touch & Mobile Responsiveness */
+/* ========================================================
+   TOUCH CONTROLS: ARCADE VIRTUAL JOYSTICK + ACTION BUTTON
+======================================================== */
+#touch-controls {
+  display: none; /* Ativado em ecrãs touch / mobile */
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 25;
+}
+
+/* Joystick Zone & Base */
+.joystick-zone {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+  user-select: none;
+}
+
+.joystick-base {
+  width: 118px;
+  height: 118px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, #1b2038 0%, #0a0d18 100%);
+  border: 3px solid #ffaa00;
+  box-shadow: 0 0 15px rgba(255, 170, 0, 0.4), inset 0 0 18px rgba(0, 0, 0, 0.95);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.joystick-cross {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+}
+
+.j-dir {
+  position: absolute;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+  transition: color 0.08s, text-shadow 0.08s, transform 0.08s;
+  pointer-events: none;
+  font-weight: bold;
+}
+.j-dir.j-up    { top: 7px; left: 50%; transform: translateX(-50%); }
+.j-dir.j-down  { bottom: 7px; left: 50%; transform: translateX(-50%); }
+.j-dir.j-left  { left: 7px; top: 50%; transform: translateY(-50%); }
+.j-dir.j-right { right: 7px; top: 50%; transform: translateY(-50%); }
+
+.j-dir.active {
+  color: #ffd600;
+  text-shadow: 0 0 10px #ffd600, 0 0 15px #ffab00;
+  transform: translateX(-50%) scale(1.3);
+}
+.j-dir.j-left.active, .j-dir.j-right.active {
+  transform: translateY(-50%) scale(1.3);
+}
+
+.joystick-stick {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffd54f 0%, #ff8f00 65%, #b25800 100%);
+  border: 2.5px solid #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8), 0 0 14px rgba(255, 213, 79, 0.6);
+  position: absolute;
+  pointer-events: none;
+  will-change: transform;
+  transition: transform 0.03s ease-out;
+}
+
+/* Botão Saltar */
+.touch-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+  user-select: none;
+}
+
+.action-btn.jump {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 32%, #ff4d4d 0%, #c62828 70%, #7f0000 100%);
+  border: 3px solid #ff8a80;
+  color: #ffffff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9.5px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 6px 0 #4f0000, 0 8px 16px rgba(255, 0, 0, 0.45);
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+}
+
+.action-btn.jump:active, .action-btn.jump.active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #4f0000, 0 4px 10px rgba(255, 0, 0, 0.5);
+  background: radial-gradient(circle at 32% 32%, #ff7777 0%, #b71c1c 70%, #600000 100%);
+}
+
+/* ========================================================
+   RESPONSIVIDADE: VERTICAL (PORTRAIT) vs HORIZONTAL (LANDSCAPE)
+======================================================== */
+
+/* Mobile & Touch General */
 @media (hover: none) and (pointer: coarse), (max-width: 900px) {
   #touch-controls {
     display: flex;
-    justify-content: space-between;
   }
-  #arcade-header .subtitle,
-  .control-hints span {
+  .control-hints > span {
     display: none;
   }
   #arcade-cabinet {
-    padding: 0;
+    padding: env(safe-area-inset-top, 4px) env(safe-area-inset-right, 8px) env(safe-area-inset-bottom, 8px) env(safe-area-inset-left, 8px);
     border: none;
     border-radius: 0;
+    max-width: 100vw;
+    max-height: 100dvh;
+    box-shadow: none;
+    background: #080811;
   }
 }
 
-.footer-buttons {
-  display: flex;
-  gap: 8px;
-  align-items: center;
+/* 1. MODO VERTICAL (PORTRAIT) */
+@media (orientation: portrait) and (max-width: 900px) {
+  .rotate-hint {
+    display: flex;
+  }
+  #arcade-header {
+    margin-bottom: 4px;
+  }
+  #arcade-header .logo {
+    font-size: 13px;
+    letter-spacing: 1px;
+  }
+  #arcade-header .subtitle {
+    display: none;
+  }
+  #screen-wrapper {
+    max-height: 48dvh;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    flex: none;
+    border-width: 2px;
+  }
+  #arcade-footer {
+    margin: 4px 0;
+    padding: 2px;
+    justify-content: center;
+  }
+  .footer-buttons {
+    justify-content: center;
+    width: 100%;
+  }
+  .retro-btn {
+    font-size: 7.5px;
+    padding: 4px 6px;
+  }
+  #touch-controls {
+    position: relative;
+    flex: 1;
+    min-height: 140px;
+    max-height: 180px;
+    padding: 0 12px env(safe-area-inset-bottom, 12px) 12px;
+    align-items: center;
+    justify-content: space-around;
+  }
+}
+
+/* 2. MODO HORIZONTAL (LANDSCAPE) */
+@media (orientation: landscape) and (max-width: 1024px) {
+  .rotate-hint {
+    display: none !important;
+  }
+  #arcade-cabinet {
+    width: 100vw;
+    height: 100dvh;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  #arcade-header {
+    display: none;
+  }
+  #screen-wrapper {
+    height: 100dvh;
+    max-height: 100dvh;
+    width: auto;
+    max-width: calc(100dvh * 4 / 3);
+    aspect-ratio: 4 / 3;
+    border: none;
+    border-radius: 0;
+  }
+  #touch-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0 20px 18px 20px;
+    z-index: 40;
+  }
+  .joystick-zone {
+    pointer-events: auto;
+  }
+  .touch-right {
+    pointer-events: auto;
+  }
+  #arcade-footer {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+    margin: 0;
+    padding: 0;
+    z-index: 50;
+    pointer-events: auto;
+  }
+  .footer-buttons {
+    background: rgba(10, 12, 22, 0.7);
+    padding: 4px 8px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(4px);
+  }
+  .retro-btn {
+    font-size: 7px;
+    padding: 3px 6px;
+  }
 }

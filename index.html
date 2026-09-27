@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>A Revolta das Galinhas (Chicken's Revenge 1984)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,6 +12,10 @@
 <body>
   <div id="arcade-cabinet">
     <!-- Top Bezel / Header -->
+    <div id="rotate-hint" class="rotate-hint">
+      <span>🔄 RODA NA HORIZONTAL PARA ECRÃ CHEIO</span>
+      <button id="btn-close-hint" type="button">✕</button>
+    </div>
     <header id="arcade-header">
       <div class="logo">🐔 A REVOLTA DAS GALINHAS</div>
       <div class="subtitle">TRIBUTO AO CHUCKIE EGG (1984)</div>
@@ -27,15 +31,17 @@
 
     <!-- On-screen Virtual Mobile Controls (Landscape Ergonomic Layout) -->
     <div id="touch-controls">
-      <!-- Left Thumb: Directional D-Pad -->
-      <div class="touch-cluster touch-left">
-        <button id="btn-up" class="dpad-btn up" aria-label="Subir">▲</button>
-        <div class="dpad-middle">
-          <button id="btn-left" class="dpad-btn left" aria-label="Esquerda">◄</button>
-          <div class="dpad-center"></div>
-          <button id="btn-right" class="dpad-btn right" aria-label="Direita">►</button>
+      <!-- Left Thumb: Arcade Analog Joystick -->
+      <div id="joystick-zone" class="joystick-zone">
+        <div id="joystick-base" class="joystick-base">
+          <div class="joystick-cross">
+            <span class="j-dir j-up">▲</span>
+            <span class="j-dir j-right">►</span>
+            <span class="j-dir j-down">▼</span>
+            <span class="j-dir j-left">◄</span>
+          </div>
+          <div id="joystick-stick" class="joystick-stick"></div>
         </div>
-        <button id="btn-down" class="dpad-btn down" aria-label="Descer">▼</button>
       </div>
 
       <!-- Right Thumb: Jump Action -->

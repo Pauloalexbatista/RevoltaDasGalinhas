@@ -248,13 +248,13 @@ function setupInput() {
     if (k === " " || k === "space") keys.jump = false;
   });
 
-  // Touch Virtual Buttons Setup
-  const bindTouch = (id, action) => {
-    const btn = document.getElementById(id);
-    if (!btn) return;
-    const activate = (e) => {
+  // --- 1. BOTÃO SALTAR COM FEEDBACK TÁTIL ---
+  const jumpBtn = document.getElementById("btn-jump");
+  if (jumpBtn) {
+    const activateJump = (e) => {
       e.preventDefault();
       audio.init();
+      tryEnterFullscreen();
       if (gameState === "TITLE") {
         startGame();
         return;
@@ -263,24 +263,174 @@ function setupInput() {
         gameState = "TITLE";
         return;
       }
-      keys[action] = true;
+      keys.jump = true;
+      jumpBtn.classList.add("active");
     };
-    const deactivate = (e) => {
+    const deactivateJump = (e) => {
       e.preventDefault();
-      keys[action] = false;
+      keys.jump = false;
+      jumpBtn.classList.remove("active");
     };
-    btn.addEventListener("touchstart", activate, { passive: false });
-    btn.addEventListener("touchend", deactivate, { passive: false });
-    btn.addEventListener("mousedown", activate);
-    btn.addEventListener("mouseup", deactivate);
-    btn.addEventListener("mouseleave", deactivate);
-  };
+    jumpBtn.addEventListener("touchstart", activateJump, { passive: false });
+    jumpBtn.addEventListener("touchend", deactivateJump, { passive: false });
+    jumpBtn.addEventListener("mousedown", activateJump);
+    jumpBtn.addEventListener("mouseup", deactivateJump);
+    jumpBtn.addEventListener("mouseleave", deactivateJump);
+  }
 
-  bindTouch("btn-up", "up");
-  bindTouch("btn-down", "down");
-  bindTouch("btn-left", "left");
-  bindTouch("btn-right", "right");
-  bindTouch("btn-jump", "jump");
+  // --- 2. JOYSTICK ANALÓGICO ARCADE COM SUPORTE DIAGONAL INSTANTÂNEO ---
+  const joystickZone = document.getElementById("joystick-zone");
+  const joystickBase = document.getElementById("joystick-base");
+  const joystickStick = document.getElementById("joystick-stick");
+  const dirUp = document.querySelector(".j-dir.j-up");
+  const dirDown = document.querySelector(".j-dir.j-down");
+  const dirLeft = document.querySelector(".j-dir.j-left");
+  const dirRight = document.querySelector(".j-dir.j-right");
+
+  let joystickTouchId = null;
+  let joyCenter = { x: 0, y: 0 };
+  const JOY_MAX_DIST = 36;
+  const JOY_DEADZONE = 8;
+
+  function updateJoystick(clientX, clientY) {
+    const dx = clientX - joyCenter.x;
+    const dy = clientY - joyCenter.y;
+    const dist = Math.hypot(dx, dy);
+
+    const clampedDist = Math.min(dist, JOY_MAX_DIST);
+    const normX = dist > 0 ? (dx / dist) : 0;
+    const normY = dist > 0 ? (dy / dist) : 0;
+
+    if (joystickStick) {
+      joystickStick.style.transform = `translate(${normX * clampedDist}px, ${normY * clampedDist}px)`;
+    }
+
+    if (dist > JOY_DEADZONE) {
+      // Deteção suave e diagonal:
+      // Se mover na diagonal (ex: 45°), tanto horizontal como vertical ficam ativos!
+      // Isto permite andar para o lado e subir a escada instantaneamente sem largar o dedo!
+      const isRight = normX > 0.35;
+      const isLeft = normX < -0.35;
+      const isDown = normY > 0.35;
+      const isUp = normY < -0.35;
+
+      keys.right = isRight;
+      keys.left = isLeft;
+      keys.down = isDown;
+      keys.up = isUp;
+
+      dirUp?.classList.toggle("active", isUp);
+      dirDown?.classList.toggle("active", isDown);
+      dirLeft?.classList.toggle("active", isLeft);
+      dirRight?.classList.toggle("active", isRight);
+    } else {
+      keys.right = false;
+      keys.left = false;
+      keys.down = false;
+      keys.up = false;
+      dirUp?.classList.remove("active");
+      dirDown?.classList.remove("active");
+      dirLeft?.classList.remove("active");
+      dirRight?.classList.remove("active");
+    }
+  }
+
+  function resetJoystick() {
+    joystickTouchId = null;
+    if (joystickStick) {
+      joystickStick.style.transform = "translate(0px, 0px)";
+    }
+    keys.right = false;
+    keys.left = false;
+    keys.down = false;
+    keys.up = false;
+    dirUp?.classList.remove("active");
+    dirDown?.classList.remove("active");
+    dirLeft?.classList.remove("active");
+    dirRight?.classList.remove("active");
+  }
+
+  if (joystickZone && joystickBase) {
+    joystickZone.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      audio.init();
+      tryEnterFullscreen();
+      if (gameState === "TITLE") {
+        startGame();
+        return;
+      }
+      if (gameState === "INSTRUCTIONS") {
+        gameState = "TITLE";
+        return;
+      }
+      if (joystickTouchId === null) {
+        const touch = e.changedTouches[0];
+        joystickTouchId = touch.identifier;
+        const rect = joystickBase.getBoundingClientRect();
+        joyCenter = {
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2
+        };
+        updateJoystick(touch.clientX, touch.clientY);
+      }
+    }, { passive: false });
+
+    window.addEventListener("touchmove", (e) => {
+      if (joystickTouchId === null) return;
+      for (let i = 0; i < e.changedTouches.length; i++) {
+        if (e.changedTouches[i].identifier === joystickTouchId) {
+          e.preventDefault();
+          updateJoystick(e.changedTouches[i].clientX, e.changedTouches[i].clientY);
+          break;
+        }
+      }
+    }, { passive: false });
+
+    const endTouch = (e) => {
+      if (joystickTouchId === null) return;
+      for (let i = 0; i < e.changedTouches.length; i++) {
+        if (e.changedTouches[i].identifier === joystickTouchId) {
+          resetJoystick();
+          break;
+        }
+      }
+    };
+    window.addEventListener("touchend", endTouch, { passive: false });
+    window.addEventListener("touchcancel", endTouch, { passive: false });
+
+    // Rato para teste em PC
+    let isJoyMouseDown = false;
+    joystickZone.addEventListener("mousedown", (e) => {
+      audio.init();
+      isJoyMouseDown = true;
+      const rect = joystickBase.getBoundingClientRect();
+      joyCenter = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+      updateJoystick(e.clientX, e.clientY);
+    });
+    window.addEventListener("mousemove", (e) => {
+      if (isJoyMouseDown) updateJoystick(e.clientX, e.clientY);
+    });
+    window.addEventListener("mouseup", () => {
+      if (isJoyMouseDown) {
+        isJoyMouseDown = false;
+        resetJoystick();
+      }
+    });
+  }
+
+  // --- 3. DICA DE ROTAÇÃO & FULLSCREEN ---
+  document.getElementById("btn-close-hint")?.addEventListener("click", () => {
+    const hint = document.getElementById("rotate-hint");
+    if (hint) hint.style.display = "none";
+  });
+
+  function tryEnterFullscreen() {
+    try {
+      if (!document.fullscreenElement && window.innerWidth <= 900) {
+        document.documentElement.requestFullscreen?.().catch(() => {});
+      }
+    } catch (_) {}
+  }
 
   // Botões de topo/rodapé
   const menuBtn = document.getElementById("btn-menu-toggle");
