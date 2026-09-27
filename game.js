@@ -653,6 +653,7 @@ const levels = [
   // === NÍVEL 1: O CELEIRO INFERIOR ===
   {
     name: "NÍVEL 01: O CELEIRO INFERIOR",
+    playerSpawn: { x: 240, y: 532 },
     platforms: [
       { x: 30, y: 560, w: 740, h: 12 },
       { x: 50, y: 470, w: 220, h: 10 },
@@ -715,6 +716,7 @@ const levels = [
   // Apresenta escadas longas que atravessam múltiplos pisos com desembarques intermédios!
   {
     name: "NÍVEL 02: AS GRANDES ESCADAS",
+    playerSpawn: { x: 240, y: 532 },
     platforms: [
       { x: 30, y: 560, w: 740, h: 12 },
       // Piso 1 (y: 480)
@@ -781,6 +783,7 @@ const levels = [
   // Apresenta poço central com elevadores contínuos verticais (um a subir, outro a descer)!
   {
     name: "NÍVEL 03: O POÇO DOS ELEVADORES",
+    playerSpawn: { x: 160, y: 532 },
     // Poço do elevador entre x: 340 e x: 420 totalmente livre e sem vigas a cruzar!
     platforms: [
       // Chão Base (cortado no poço do elevador)
@@ -874,6 +877,7 @@ const levels = [
   // === NÍVEL 4: A ESTRUTURA EM PIRÂMIDE ===
   {
     name: "NÍVEL 04: A ESTRUTURA EM PIRÂMIDE",
+    playerSpawn: { x: 380, y: 532 },
     platforms: [
       { x: 30, y: 560, w: 740, h: 12 },
       { x: 60, y: 470, w: 280, h: 10 },
@@ -996,6 +1000,7 @@ const levels = [
   // === NÍVEL 6: A PONTE SUSPENSA ===
   {
     name: "NÍVEL 06: A PONTE SUSPENSA",
+    playerSpawn: { x: 200, y: 532 },
     platforms: [
       { x: 30, y: 560, w: 740, h: 12 },
       { x: 50,  y: 470, w: 160, h: 10 },
@@ -1057,6 +1062,7 @@ const levels = [
   // === NÍVEL 7: O LABIRINTO DA MOENDA ===
   {
     name: "NÍVEL 07: O LABIRINTO DA MOENDA",
+    playerSpawn: { x: 380, y: 532 },
     platforms: [
       { x: 30, y: 560, w: 740, h: 12 },
       { x: 40,  y: 470, w: 320, h: 10 },
@@ -1120,6 +1126,7 @@ const levels = [
   // === NÍVEL 8: AS PLATAFORMAS FLUTUANTES ===
   {
     name: "NÍVEL 08: AS PLATAFORMAS FLUTUANTES",
+    playerSpawn: { x: 160, y: 532 },
     platforms: [
       { x: 30,  y: 560, w: 300, h: 12 },
       { x: 470, y: 560, w: 300, h: 12 },
@@ -1180,6 +1187,7 @@ const levels = [
   // === NÍVEL 9: O MOINHO VERTICAL ===
   {
     name: "NÍVEL 09: O MOINHO VERTICAL",
+    playerSpawn: { x: 240, y: 532 },
     platforms: [
       { x: 30, y: 560, w: 740, h: 12 },
       { x: 40,  y: 470, w: 250, h: 10 },
@@ -1237,6 +1245,7 @@ const levels = [
   // === NÍVEL 10: O GRANDE ARMAZÉM REAL ===
   {
     name: "NÍVEL 10: O GRANDE ARMAZÉM REAL",
+    playerSpawn: { x: 180, y: 532 },
     platforms: [
       { x: 30,  y: 560, w: 310, h: 12 },
       { x: 426, y: 560, w: 344, h: 12 },
@@ -1517,38 +1526,30 @@ class ChickenPlayer {
       }
     }
 
-        // --- REGRAS DE ELEVADOR & POÇO (NÍVEL 3) ---
-    const hasElevatorShaft = (elevators && elevators.length > 0);
-    const inShaftColumn = (this.x + this.w * 0.5 > 335 && this.x + this.w * 0.5 < 435);
-
-    // A. Queda no poço do elevador (Nível 3): qualquer queda no vão entre as plataformas ou abaixo do chão tira a vida!
-    if (hasElevatorShaft) {
-      const midX = this.x + this.w * 0.5;
-      const onLeftGround = (midX >= 25 && midX <= 338);
-      const onRightGround = (midX >= 428 && midX <= 775);
-
-      if ((!onLeftGround && !onRightGround && (this.y + this.h >= 560)) || (this.y > 572)) {
-        this.ridingElevator = null;
-        triggerLifeLost();
-        return;
-      }
-    }
-
-    // B. Chão de segurança para níveis normais
+        // --- REGRAS DE FOSSO/BURACO & ELEVADOR UNIVERSAIS ---
+    // A. Queda em poço/abismo (qualquer nível onde haja buraco no chão):
     if (this.y + this.h > 572) {
-      this.y = 572 - this.h;
-      this.vy = 0;
-      this.isGrounded = true;
-      this.ridingElevator = null;
-    }
-
-    // C. Esmagamento contra o teto ao subir no elevador (Nível 3): perde a vida!
-    if (hasElevatorShaft && (this.ridingElevator || inShaftColumn)) {
-      if (this.y <= 60) {
+      // Verificar se existe chão sólido por baixo dos pés da Piu
+      const groundPlat = platforms.find(p => p.y >= 550 && (this.x + this.w * 0.7 > p.x && this.x + this.w * 0.3 < p.x + p.w));
+      if (!groundPlat) {
+        // Caiu no vazio/fosso do elevador: perde a vida!
         this.ridingElevator = null;
         triggerLifeLost();
         return;
+      } else {
+        // Assenta em segurança na plataforma do chão
+        this.y = groundPlat.y - this.h;
+        this.vy = 0;
+        this.isGrounded = true;
+        this.ridingElevator = null;
       }
+    }
+
+    // B. Esmagamento contra o teto ao subir no elevador: perde a vida!
+    if (this.ridingElevator && this.y <= 65) {
+      this.ridingElevator = null;
+      triggerLifeLost();
+      return;
     }
   }
 
@@ -2640,7 +2641,9 @@ function triggerLifeLost() {
         }, 3500);
       }
     } else {
-      piu.reset();
+      const spX = (currentLevel.playerSpawn && currentLevel.playerSpawn.x) || 240;
+      const spY = (currentLevel.playerSpawn && currentLevel.playerSpawn.y) || 532;
+      piu.reset(spX, spY);
       harrys.forEach(h => h.reset());
       gameState = "PLAYING";
     }
