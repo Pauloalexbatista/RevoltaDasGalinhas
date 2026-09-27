@@ -1,0 +1,262 @@
+﻿* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+body {
+  background-color: #0b0c10;
+  color: #66fcf1;
+  font-family: 'Press Start 2P', monospace, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+#arcade-cabinet {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  max-width: 1024px;
+  max-height: 900px;
+  position: relative;
+  background: radial-gradient(circle at center, #1b1c2e 0%, #080811 100%);
+  border: 4px solid #282b45;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(78, 140, 255, 0.2);
+  border-radius: 12px;
+  padding: 10px;
+}
+
+#arcade-header {
+  text-align: center;
+  margin-bottom: 6px;
+  width: 100%;
+}
+
+#arcade-header .logo {
+  font-size: 16px;
+  color: #ffeb3b;
+  text-shadow: 0 0 8px rgba(255, 235, 59, 0.8), 2px 2px 0px #d84315;
+  letter-spacing: 2px;
+}
+
+#arcade-header .subtitle {
+  font-size: 9px;
+  color: #00e5ff;
+  margin-top: 4px;
+  letter-spacing: 1.5px;
+}
+
+#screen-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  aspect-ratio: 4 / 3;
+  background-color: #000000;
+  border: 4px solid #1a1e36;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#gameCanvas {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  display: block;
+  background-color: #000;
+}
+
+/* CRT Scanlines & Glow */
+.scanlines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.4) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0.75;
+  transition: opacity 0.2s;
+}
+
+.crt-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  box-shadow: inset 0 0 60px rgba(24, 76, 120, 0.35);
+  pointer-events: none;
+  z-index: 11;
+}
+
+.no-crt .scanlines,
+.no-crt .crt-glow {
+  display: none !important;
+}
+
+/* Touch Controls Layout */
+#touch-controls {
+  display: none; /* Shown on touch screens or when screen is small */
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  width: 100%;
+  height: 140px;
+  pointer-events: none;
+  z-index: 20;
+  padding: 0 15px;
+}
+
+.touch-cluster {
+  pointer-events: auto;
+  position: absolute;
+  bottom: 10px;
+}
+
+.touch-left {
+  left: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dpad-middle {
+  display: flex;
+  align-items: center;
+}
+
+.dpad-center {
+  width: 44px;
+  height: 44px;
+  background: rgba(30, 35, 60, 0.5);
+}
+
+.dpad-btn {
+  width: 48px;
+  height: 48px;
+  background: rgba(45, 52, 90, 0.85);
+  border: 2px solid #5d75ba;
+  color: #ffffff;
+  font-size: 18px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 0 #181d33;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dpad-btn:active {
+  background: #ffaa00;
+  color: #000;
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #181d33;
+}
+
+.touch-right {
+  right: 25px;
+  bottom: 25px;
+}
+
+.action-btn.jump {
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #ff4b4b, #9b0000);
+  border: 3px solid #ff9999;
+  color: #ffffff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 6px 0 #5a0000, 0 8px 15px rgba(255, 0, 0, 0.4);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.action-btn.jump:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #5a0000, 0 4px 8px rgba(255, 0, 0, 0.4);
+  background: radial-gradient(circle at 30% 30%, #ff7777, #bb1111);
+}
+
+#arcade-footer {
+  width: 100%;
+  margin-top: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 9px;
+  color: #a0a8c2;
+  padding: 4px 10px;
+}
+
+.control-hints {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.retro-btn {
+  background: #1f243d;
+  color: #ffeb3b;
+  border: 1px solid #5a6698;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  padding: 5px 8px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.retro-btn:hover {
+  background: #2f3863;
+  color: #ffffff;
+}
+
+/* Touch & Mobile Responsiveness */
+@media (hover: none) and (pointer: coarse), (max-width: 900px) {
+  #touch-controls {
+    display: flex;
+    justify-content: space-between;
+  }
+  #arcade-header .subtitle,
+  .control-hints span {
+    display: none;
+  }
+  #arcade-cabinet {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+  }
+}
+
+.footer-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}

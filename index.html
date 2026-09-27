@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>A Revolta das Galinhas (Chicken's Revenge 1984)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="arcade-cabinet">
+    <!-- Top Bezel / Header -->
+    <header id="arcade-header">
+      <div class="logo">🐔 A REVOLTA DAS GALINHAS</div>
+      <div class="subtitle">TRIBUTO AO CHUCKIE EGG (1984)</div>
+    </header>
+    <input id="mobile-name-input" type="text" maxlength="8" autocomplete="off" autocapitalize="characters" style="position: absolute; opacity: 0; pointer-events: none; left: -9999px;">
+
+    <!-- Main Screen Area with Scanlines & CRT curvature -->
+    <div id="screen-wrapper" class="crt-screen">
+      <canvas id="gameCanvas" width="800" height="600"></canvas>
+      <div class="scanlines"></div>
+      <div class="crt-glow"></div>
+    </div>
+
+    <!-- On-screen Virtual Mobile Controls (Landscape Ergonomic Layout) -->
+    <div id="touch-controls">
+      <!-- Left Thumb: Directional D-Pad -->
+      <div class="touch-cluster touch-left">
+        <button id="btn-up" class="dpad-btn up" aria-label="Subir">▲</button>
+        <div class="dpad-middle">
+          <button id="btn-left" class="dpad-btn left" aria-label="Esquerda">◄</button>
+          <div class="dpad-center"></div>
+          <button id="btn-right" class="dpad-btn right" aria-label="Direita">►</button>
+        </div>
+        <button id="btn-down" class="dpad-btn down" aria-label="Descer">▼</button>
+      </div>
+
+      <!-- Right Thumb: Jump Action -->
+      <div class="touch-cluster touch-right">
+        <button id="btn-jump" class="action-btn jump" aria-label="Saltar">
+          <span>SALTAR</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Arcade Footer / Instructions -->
+    <footer id="arcade-footer">
+      <div class="control-hints">
+        <span><strong>TECLADO:</strong> [O/P] ou [◄/►] Mover | [Q/A] ou [▲/▼] Escadas | [ESPAÇO] Saltar | [I] Instruções</span>
+        <div class="footer-buttons">
+          <button id="btn-menu-toggle" class="retro-btn">🏠 MENU</button>
+          <button id="btn-instr-toggle" class="retro-btn">📖 INSTRUÇÕES</button>
+          <button id="btn-sound-toggle" class="retro-btn">🔊 SOM: ON</button>
+          <button id="btn-crt-toggle" class="retro-btn">📺 CRT: ON</button>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
