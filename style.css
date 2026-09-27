@@ -435,9 +435,10 @@ html, body {
   }
   #arcade-footer {
     position: absolute;
-    top: 6px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 10px;
+    left: max(14px, env(safe-area-inset-left));
+    right: auto;
+    transform: none;
     width: auto;
     margin: 0;
     padding: 0;
@@ -445,14 +446,21 @@ html, body {
     pointer-events: auto;
   }
   .footer-buttons {
-    background: rgba(10, 12, 22, 0.7);
-    padding: 4px 8px;
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 6px;
+    background: rgba(10, 12, 22, 0.82);
+    padding: 5px 8px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(4px);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+    max-width: 155px;
   }
   .retro-btn {
     font-size: 7px;
-    padding: 3px 6px;
+    padding: 4px 5px;
+    text-align: center;
+    white-space: nowrap;
   }
 }

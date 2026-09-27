@@ -1306,12 +1306,19 @@ class GuardDog {
     this.y = y;
     this.w = 34;
     this.h = 24;
-    this.vx = 145;
+    this.speed = 150;
+    this.climbSpeed = 95;
+    this.vx = 0;
     this.vy = 0;
     this.facing = 1;
     this.active = false;
+    this.isClimbing = false;
+    this.climbDir = 0;
+    this.currentLadder = null;
+    this.ladderCooldown = 0;
     this.animTimer = 0;
     this.frame = 0;
+    this.barkTimer = 0;
   }
 
   reset(x, y) {
@@ -1322,43 +1329,220 @@ class GuardDog {
     this.x = this.startX;
     this.y = this.startY;
     this.active = false;
-    this.vx = 145;
+    this.isClimbing = false;
+    this.climbDir = 0;
+    this.currentLadder = null;
+    this.ladderCooldown = 0;
+    this.vx = 0;
     this.vy = 0;
+    this.facing = 1;
+    this.barkTimer = 0;
   }
 
   release() {
     this.active = true;
+    this.isClimbing = false;
+    this.currentLadder = null;
+    this.vy = 0;
+    this.vx = 140;
     audio.dogBark();
   }
 
-  update(dt, platforms, targetX) {
+  update(dt, platforms, ladders, piu) {
     if (!this.active) return;
 
-    this.animTimer += dt * 14;
-    this.frame = Math.floor(this.animTimer) % 2;
-
-    if (this.x < targetX - 10) {
-      this.vx = 150;
-      this.facing = 1;
-    } else if (this.x > targetX + 10) {
-      this.vx = -150;
-      this.facing = -1;
+    if (this.ladderCooldown > 0) {
+      this.ladderCooldown -= dt;
     }
 
+    // Ladrar periodicamente durante a perseguição
+    this.barkTimer += dt;
+    if (this.barkTimer > 4.5) {
+      this.barkTimer = 0;
+      audio.dogBark();
+    }
+
+    this.animTimer += dt * (this.isClimbing ? 8 : 14);
+    this.frame = Math.floor(this.animTimer) % 2;
+
+    // 1. MODO DE TREPAR / DESCER ESCADA
+    if (this.isClimbing && this.currentLadder) {
+      const l = this.currentLadder;
+      this.y += this.climbDir * this.climbSpeed * dt;
+      this.x += (l.x + (l.w - this.w) / 2 - this.x) * 0.25;
+
+      const footY = this.y + this.h;
+      const piuFootY = piu.y + piu.h;
+
+      // Se estiver a subir
+      if (this.climbDir < 0) {
+        if (this.y + this.h <= l.y + 4) {
+          this.y = l.y - this.h;
+          this.isClimbing = false;
+          this.currentLadder = null;
+          this.ladderCooldown = 0.5;
+          this.vy = 0;
+        }
+      }
+      // Se estiver a descer
+      else if (this.climbDir > 0) {
+        if (this.y + this.h >= l.y + l.h - 4) {
+          this.y = l.y + l.h - this.h;
+          this.isClimbing = false;
+          this.currentLadder = null;
+          this.ladderCooldown = 0.5;
+          this.vy = 0;
+        }
+      }
+
+      // Desembarque em plataformas intermédias se a Piu estiver nesse nível
+      if (this.isClimbing && Math.abs(footY - piuFootY) < 14) {
+        const interPlat = platforms.find(p => Math.abs(footY - p.y) < 8 && this.x + this.w * 0.7 > p.x && this.x + this.w * 0.3 < p.x + p.w);
+        if (interPlat) {
+          this.y = interPlat.y - this.h;
+          this.isClimbing = false;
+          this.currentLadder = null;
+          this.ladderCooldown = 0.5;
+          this.vy = 0;
+        }
+      }
+      return;
+    }
+
+    // 2. MODO DE CAMINHADA / CORRIDA / QUEDA
+    const footY = this.y + this.h;
+    const piuFootY = piu.y + piu.h;
+    const dy = piuFootY - footY;
+    const dx = (piu.x + piu.w / 2) - (this.x + this.w / 2);
+
+    // Plataforma atual onde o Bobi se apoia
+    const curPlat = platforms.find(p => 
+      Math.abs(footY - p.y) <= 8 && 
+      this.x + this.w * 0.7 > p.x && 
+      this.x + this.w * 0.3 < p.x + p.w
+    );
+
+    // Decisão de IA de Navegação:
+    // A. Piu está NO MESMO PISO (diferença vertical < 28px):
+    if (Math.abs(dy) < 28) {
+      if (dx > 6) {
+        this.vx = this.speed;
+        this.facing = 1;
+      } else if (dx < -6) {
+        this.vx = -this.speed;
+        this.facing = -1;
+      } else {
+        this.vx = 0;
+      }
+    }
+    // B. Piu está num PISO INFERIOR (dy >= 28): O Bobi tem de DESCER!
+    else if (dy >= 28) {
+      let chosenLadder = null;
+      if (curPlat && this.ladderCooldown <= 0) {
+        const downLadders = ladders.filter(l => 
+          Math.abs(footY - l.y) <= 16 && 
+          l.y + l.h > footY + 25 &&
+          l.x + l.w > curPlat.x - 12 && 
+          l.x < curPlat.x + curPlat.w + 12
+        );
+        if (downLadders.length > 0) {
+          downLadders.sort((a, b) => Math.abs((a.x + a.w/2) - (piu.x + piu.w/2)) - Math.abs((b.x + b.w/2) - (piu.x + piu.w/2)));
+          chosenLadder = downLadders[0];
+        }
+      }
+
+      if (chosenLadder) {
+        const ladderMidX = chosenLadder.x + chosenLadder.w / 2;
+        const dogMidX = this.x + this.w / 2;
+        if (Math.abs(dogMidX - ladderMidX) < 12) {
+          this.isClimbing = true;
+          this.currentLadder = chosenLadder;
+          this.climbDir = 1;
+          this.vx = 0;
+          this.vy = 0;
+          this.x = chosenLadder.x + (chosenLadder.w - this.w) / 2;
+          return;
+        } else if (dogMidX < ladderMidX) {
+          this.vx = this.speed;
+          this.facing = 1;
+        } else {
+          this.vx = -this.speed;
+          this.facing = -1;
+        }
+      } else if (curPlat) {
+        // Sem escada nesta viga: corre até à borda e salta/cai para o nível de baixo!
+        const targetSide = (piu.x > (curPlat.x + curPlat.w / 2)) ? 1 : -1;
+        this.vx = this.speed * targetSide;
+        this.facing = targetSide;
+      } else {
+        // Em queda livre: acelera na direção da Piu
+        this.vx = (dx > 0 ? 1 : -1) * 110;
+        this.facing = dx > 0 ? 1 : -1;
+      }
+    }
+    // C. Piu está num PISO SUPERIOR (dy < -28): O Bobi tem de SUBIR!
+    else {
+      let chosenLadder = null;
+      if (curPlat && this.ladderCooldown <= 0) {
+        const upLadders = ladders.filter(l => 
+          Math.abs(footY - (l.y + l.h)) <= 16 && 
+          l.x + l.w > curPlat.x - 12 && 
+          l.x < curPlat.x + curPlat.w + 12
+        );
+        if (upLadders.length > 0) {
+          upLadders.sort((a, b) => Math.abs((a.x + a.w/2) - (piu.x + piu.w/2)) - Math.abs((b.x + b.w/2) - (piu.x + piu.w/2)));
+          chosenLadder = upLadders[0];
+        }
+      }
+
+      if (chosenLadder) {
+        const ladderMidX = chosenLadder.x + chosenLadder.w / 2;
+        const dogMidX = this.x + this.w / 2;
+        if (Math.abs(dogMidX - ladderMidX) < 12) {
+          this.isClimbing = true;
+          this.currentLadder = chosenLadder;
+          this.climbDir = -1;
+          this.vx = 0;
+          this.vy = 0;
+          this.x = chosenLadder.x + (chosenLadder.w - this.w) / 2;
+          return;
+        } else if (dogMidX < ladderMidX) {
+          this.vx = this.speed;
+          this.facing = 1;
+        } else {
+          this.vx = -this.speed;
+          this.facing = -1;
+        }
+      } else {
+        this.vx = (dx > 0 ? 1 : -1) * this.speed;
+        this.facing = dx > 0 ? 1 : -1;
+      }
+    }
+
+    // Movimento físico e gravidade
     this.x += this.vx * dt;
     this.vy += GRAVITY * dt;
     this.y += this.vy * dt;
 
-    for (const p of platforms) {
-      if (this.x + this.w > p.x && this.x < p.x + p.w) {
-        if (this.y + this.h >= p.y && this.y + this.h <= p.y + 14 && this.vy >= 0) {
-          this.y = p.y - this.h;
-          this.vy = 0;
-          break;
+    // Aterrar nas plataformas
+    if (this.vy >= 0) {
+      for (const p of platforms) {
+        if (this.x + this.w * 0.7 > p.x && this.x + this.w * 0.3 < p.x + p.w) {
+          const feet = this.y + this.h;
+          if (feet >= p.y && feet <= p.y + 16) {
+            this.y = p.y - this.h;
+            this.vy = 0;
+            break;
+          }
         }
       }
     }
 
+    // Limites laterais da arena
+    if (this.x < 24) { this.x = 24; this.vx = Math.abs(this.vx); }
+    if (this.x + this.w > 776) { this.x = 776 - this.w; this.vx = -Math.abs(this.vx); }
+
+    // Chão de segurança
     if (this.y + this.h > 572) {
       this.y = 572 - this.h;
       this.vy = 0;
@@ -1369,30 +1553,47 @@ class GuardDog {
     if (!this.active) return;
     c.save();
     c.translate(this.x + this.w / 2, this.y + this.h / 2);
-    c.scale(this.facing, 1);
 
-    c.fillStyle = "#8d6e63";
-    c.fillRect(-12, -6, 24, 12);
+    if (this.isClimbing) {
+      // Bobi a subir/descer na escada
+      c.fillStyle = "#8d6e63";
+      c.fillRect(-10, -10, 20, 18);
+      c.fillStyle = "#6d4c41";
+      c.fillRect(-8, -14, 16, 6);
+      c.fillStyle = "#4e342e";
+      c.fillRect(-10, -16, 4, 5);
+      c.fillRect(6, -16, 4, 5);
+      const climbShift = (this.frame === 0) ? 3 : -3;
+      c.fillStyle = "#4e342e";
+      c.fillRect(-12, -6 + climbShift, 4, 5);
+      c.fillRect(8, -6 - climbShift, 4, 5);
+      c.fillRect(-11, 6 - climbShift, 4, 6);
+      c.fillRect(7, 6 + climbShift, 4, 6);
+    } else {
+      c.scale(this.facing, 1);
 
-    c.fillStyle = "#6d4c41";
-    c.fillRect(4, -12, 12, 11);
-    c.fillStyle = "#ff5252";
-    c.fillRect(14, -6, 4, 3);
+      c.fillStyle = "#8d6e63";
+      c.fillRect(-12, -6, 24, 12);
 
-    c.fillStyle = "#4e342e";
-    c.fillRect(2, -14, 5, 7);
+      c.fillStyle = "#6d4c41";
+      c.fillRect(4, -12, 12, 11);
+      c.fillStyle = "#ff5252";
+      c.fillRect(14, -6, 4, 3);
 
-    c.fillStyle = "#ff1744";
-    c.fillRect(10, -10, 3, 3);
+      c.fillStyle = "#4e342e";
+      c.fillRect(2, -14, 5, 7);
 
-    c.fillStyle = "#4e342e";
-    c.fillRect(-16, -10 + (this.frame * 4), 5, 4);
+      c.fillStyle = "#ff1744";
+      c.fillRect(10, -10, 3, 3);
 
-    c.fillStyle = "#4e342e";
-    const run = (this.frame === 0) ? 4 : -4;
-    c.fillRect(-10 + run, 6, 4, 6);
-    c.fillRect(6 - run, 6, 4, 6);
+      c.fillStyle = "#4e342e";
+      c.fillRect(-16, -10 + (this.frame * 4), 5, 4);
 
+      c.fillStyle = "#4e342e";
+      const run = (this.frame === 0) ? 4 : -4;
+      c.fillRect(-10 + run, 6, 4, 6);
+      c.fillRect(6 - run, 6, 4, 6);
+    }
     c.restore();
   }
 }
@@ -1796,7 +1997,7 @@ function update(dt) {
 
   // Atualizar Cão de Guarda
   if (dogReleased) {
-    guardDog.update(dt, currentLevel.platforms, piu.x);
+    guardDog.update(dt, currentLevel.platforms, currentLevel.ladders, piu);
   }
 
   // Recolha de Ovos (12 por nível)
