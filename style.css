@@ -232,6 +232,24 @@ html, body {
   pointer-events: none;
 }
 
+.joystick-cross::before,
+.joystick-cross::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 14%;
+  width: 72%;
+  height: 1.5px;
+  background: linear-gradient(to right, transparent, rgba(255, 170, 0, 0.22), rgba(255, 170, 0, 0.4), rgba(255, 170, 0, 0.22), transparent);
+  pointer-events: none;
+}
+.joystick-cross::before {
+  transform: translateY(-50%) rotate(45deg);
+}
+.joystick-cross::after {
+  transform: translateY(-50%) rotate(-45deg);
+}
+
 .j-dir {
   position: absolute;
   font-size: 11px;

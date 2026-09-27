@@ -306,13 +306,18 @@ function setupInput() {
     }
 
     if (dist > JOY_DEADZONE) {
-      // Deteção suave e diagonal:
-      // Se mover na diagonal (ex: 45°), tanto horizontal como vertical ficam ativos!
-      // Isto permite andar para o lado e subir a escada instantaneamente sem largar o dedo!
-      const isRight = normX > 0.35;
-      const isLeft = normX < -0.35;
-      const isDown = normY > 0.35;
-      const isUp = normY < -0.35;
+      // Divisão em 'X' (4 setores a 45° no círculo):
+      // - Setor Direita:  |dx| >= |dy| e dx > 0
+      // - Setor Esquerda: |dx| >= |dy| e dx < 0
+      // - Setor Baixo:    |dy| > |dx| e dy > 0
+      // - Setor Cima:     |dy| > |dx| e dy < 0
+      const absDx = Math.abs(dx);
+      const absDy = Math.abs(dy);
+
+      const isRight = (absDx >= absDy) && (dx > 0);
+      const isLeft  = (absDx >= absDy) && (dx < 0);
+      const isDown  = (absDy > absDx) && (dy > 0);
+      const isUp    = (absDy > absDx) && (dy < 0);
 
       keys.right = isRight;
       keys.left = isLeft;
@@ -424,7 +429,20 @@ function setupInput() {
     if (hint) hint.style.display = "none";
   });
 
-  function tryEnterFullscreen() {
+  
+function togglePause(forceState = null) {
+  if (gameState !== "PLAYING" && !isGamePaused) return;
+  const next = (forceState !== null) ? forceState : !isGamePaused;
+  if (isGamePaused === next) return;
+  isGamePaused = next;
+  if (isGamePaused) {
+    if (typeof audio !== "undefined" && audio.stopWalking) audio.stopWalking();
+  } else {
+    lastTime = performance.now();
+  }
+}
+
+function tryEnterFullscreen() {
     try {
       if (!document.fullscreenElement && window.innerWidth <= 900) {
         document.documentElement.requestFullscreen?.().catch(() => {});
@@ -513,7 +531,8 @@ const PIU_SPEED = 180;
 const PIU_JUMP = -270;
 const CLIMB_SPEED = 140;
 
-let gameState = "TITLE"; // "TITLE", "INSTRUCTIONS", "PLAYING", "LOST_LIFE", "GAME_OVER", "LEVEL_CLEAR"
+let gameState = "TITLE";
+let isGamePaused = false; // "TITLE", "INSTRUCTIONS", "PLAYING", "LOST_LIFE", "GAME_OVER", "LEVEL_CLEAR"
 let score = 0;
 let lives = 5;
 let currentLevelIdx = 0;
@@ -968,12 +987,37 @@ class ChickenPlayer {
       }
     }
 
-    // Chão de segurança
+        // --- REGRAS DE ELEVADOR & POÇO (NÍVEL 3) ---
+    const hasElevatorShaft = (elevators && elevators.length > 0);
+    const inShaftColumn = (this.x + this.w * 0.5 > 335 && this.x + this.w * 0.5 < 435);
+
+    // A. Queda no poço do elevador (Nível 3): perde a vida!
+    if (hasElevatorShaft && inShaftColumn && (this.y + this.h >= 565)) {
+      this.ridingElevator = null;
+      triggerLifeLost();
+      return;
+    }
+
+    // B. Chão de segurança fora do poço do elevador
     if (this.y + this.h > 572) {
+      if (hasElevatorShaft && inShaftColumn) {
+        this.ridingElevator = null;
+        triggerLifeLost();
+        return;
+      }
       this.y = 572 - this.h;
       this.vy = 0;
       this.isGrounded = true;
       this.ridingElevator = null;
+    }
+
+    // C. Esmagamento contra o teto ao subir no elevador (Nível 3): perde a vida!
+    if (hasElevatorShaft && (this.ridingElevator || inShaftColumn)) {
+      if (this.y <= 60) {
+        this.ridingElevator = null;
+        triggerLifeLost();
+        return;
+      }
     }
   }
 
@@ -1702,7 +1746,7 @@ function drawHUD(c) {
 let lastTime = 0;
 
 function update(dt) {
-  if (gameState !== "PLAYING") return;
+  if (gameState !== "PLAYING" || isGamePaused) return;
 
   // Atualizar Elevadores (Nível 3) - SÓ SOBEM!
   if (currentLevel.elevators && currentLevel.elevators.length > 0) {
@@ -1711,9 +1755,10 @@ function update(dt) {
 
       // Se a Piu estiver no elevador e chegar ao teto: MORRE ESMAGADA!
       if (piu.ridingElevator === el) {
-        if (el.y <= 70 || piu.y <= 50) {
+        if (el.y <= 85 || piu.y <= 65) {
           piu.ridingElevator = null;
           triggerLifeLost();
+          return;
         }
       }
 
@@ -2006,6 +2051,49 @@ function render() {
     ctx.font = "10px 'Press Start 2P', monospace";
     ctx.fillText("A VOLTAR AO MENU PRINCIPAL... [ESPAÇO]", CANVAS_WIDTH / 2, 360);
   }
+
+  // Ecrã de Pausa Arcade Retro
+  if (isGamePaused && gameState === "PLAYING") {
+    ctx.save();
+    ctx.fillStyle = "rgba(0, 0, 0, 0.72)";
+    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+    const boxW = 480;
+    const boxH = 150;
+    const boxX = (CANVAS_WIDTH - boxW) / 2;
+    const boxY = (CANVAS_HEIGHT - boxH) / 2;
+
+    ctx.fillStyle = "#0a0e1c";
+    ctx.fillRect(boxX, boxY, boxW, boxH);
+    ctx.strokeStyle = "#ffd600";
+    ctx.lineWidth = 4;
+    ctx.strokeRect(boxX, boxY, boxW, boxH);
+
+    ctx.strokeStyle = "#ff9100";
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(boxX + 5, boxY + 5, boxW - 10, boxH - 10);
+
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    const blink = Math.floor(Date.now() / 450) % 2 === 0;
+    ctx.font = "24px 'Press Start 2P', monospace";
+    ctx.fillStyle = blink ? "#ffd600" : "#ffffff";
+    ctx.shadowColor = "#ffab00";
+    ctx.shadowBlur = 10;
+    ctx.fillText("|| JOGO EM PAUSA ||", CANVAS_WIDTH / 2, boxY + 45);
+
+    ctx.shadowBlur = 0;
+    ctx.font = "11px 'Press Start 2P', monospace";
+    ctx.fillStyle = "#00e5ff";
+    ctx.fillText("TOQUE NO ECRÃ PARA CONTINUAR", CANVAS_WIDTH / 2, boxY + 95);
+
+    ctx.font = "8px 'Press Start 2P', monospace";
+    ctx.fillStyle = "#888888";
+    ctx.fillText("[ ESC OU TOQUE EM QUALQUER SÍTIO ]", CANVAS_WIDTH / 2, boxY + 125);
+    ctx.restore();
+  }
+
 }
 
 function startGame() {
@@ -2019,6 +2107,7 @@ window.addEventListener("keydown", (e) => {
   if (gameState === "GAME_OVER" && (e.key === " " || e.key === "Enter" || e.key === "Escape")) {
     gameState = "TITLE";
   }
+
 });
 
 function gameLoop(timestamp) {
@@ -2034,4 +2123,34 @@ function gameLoop(timestamp) {
 
 // Iniciar Motor e Controlos
 setupInput();
+
+  // --- PAUSA POR TOQUE NO ECRÃ (TIPO VÍDEO) E AUTO-PAUSA ---
+  function handleScreenTap(e) {
+    if (isGamePaused) {
+      e.preventDefault();
+      togglePause(false);
+      return;
+    }
+
+    if (gameState === "PLAYING") {
+      const target = e.target;
+      if (target && target.closest && target.closest("#btn-jump, #joystick-zone, #btn-menu-toggle, #btn-instr-toggle, #btn-sound-toggle, #btn-crt-toggle, #btn-close-hint, #highscore-modal, button, input")) {
+        return;
+      }
+      togglePause(true);
+    }
+  }
+
+  window.addEventListener("pointerdown", handleScreenTap);
+
+  window.addEventListener("blur", () => {
+    if (gameState === "PLAYING" && !isGamePaused) togglePause(true);
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden && gameState === "PLAYING" && !isGamePaused) togglePause(true);
+  });
+  window.addEventListener("orientationchange", () => {
+    if (gameState === "PLAYING" && !isGamePaused) togglePause(true);
+  });
+
 requestAnimationFrame(gameLoop);

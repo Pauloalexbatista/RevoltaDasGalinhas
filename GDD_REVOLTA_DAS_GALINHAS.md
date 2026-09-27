@@ -78,9 +78,18 @@ PRJT RevoltaDasGalinhas/
 
 ---
 
-## 7. Próximos Passos & Melhorias Futuras (Roadmap)
-1. **Calibração de Tolerância do Joystick Virtual (Desconto de Movimento):**
-   - Evitar bloqueios acidentais para "Descer" quando o dedo escorrega ligeiramente na diagonal em vigas onde não há escada (ou no piso mais baixo).
-   - Implementar "zona morta direcional" ou prioridade horizontal quando o jogador se move numa viga contínua, permitindo continuar a andar para o lado com facilidade sem que um deslize mínimo vertical trave o movimento.
-2. **Orientação Automática / Prompt Inteligente de Rotação (Landscape):**
-   - Melhorar o pedido de ecrã inteiro e rotação automática para telemóveis (usando `Screen Orientation API` e modal/prompt elegante quando detetado telemóvel na vertical).
+## 7. Melhorias Implementadas & Ajustes de Jogabilidade (v1.2)
+1. **Joystick em "X" (4 Setores Angulares a 45°):**
+   - Implementada a divisão matemática do círculo em 4 setores ("X"), garantindo que movimentos laterais (esquerda/direita) têm prioridade e nunca são bloqueados por desvios na diagonal.
+   - Adicionada indicação visual com miras cruzadas em "X" sutis na base do joystick.
+2. **Sistema de Pausa Tátil Arcade (Estilo Leitor de Vídeo):**
+   - Tocar em qualquer ponto do ecrã/canvas (fora dos botões de ação e joystick) coloca o jogo em pausa ou retoma imediatamente.
+   - Overlay de pausa retro nostálgico com moldura de alta definição, texto pulsante e instruções.
+3. **Auto-Pausa Preventiva em Telemóveis:**
+   - Deteção de eventos de rotação de ecrã (`orientationchange`), mensagens de sistema, perda de foco (`blur`) ou troca de aba (`visibilitychange`), pausando o jogo de forma preventiva para que a galinha nunca morra enquanto mensagens de sistema cobrem o jogo.
+4. **Nível 3: Morte no Poço do Elevador e Esmagamento no Teto:**
+   - Se a galinha cair no poço vazio do elevador na base do celeiro, perde uma vida.
+   - Se for transportada pelo elevador até ao teto do nível e não saltar a tempo, é esmagada contra as vigas do telhado, perdendo uma vida (fidelidade clássica Chuckie Egg).
+5. **Correção do Hub Arcade (Rolagem Bi-direcional e Botão Topo):**
+   - No portal Arcade Hub (`testeweb.site`), a rolagem móvel agora funciona nos dois sentidos (para cima e para baixo com toque) sem bloqueios de inércia.
+   - Adicionado botão flutuante retro "▲ TOPO" para regresso instantâneo ao jogo de Pinball no topo.
