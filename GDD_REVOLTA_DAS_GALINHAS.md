@@ -74,3 +74,13 @@ PRJT RevoltaDasGalinhas/
 ## 6. Fim de Jogo & Registo de Recordes (High Scores)
 * **Regresso ao Menu Principal:** Quando o jogo termina, o utilizador regressa sempre ao Menu Principal arcade.
 * **Ecrã de Novo Recorde:** Se a pontuação final entrar no Top 7, surge o ecrã clássico arcade para introdução do nome do jogador (até 8 letras), gravando a pontuação e exibindo-a na tabela permanente (guardada no navegador).
+
+
+---
+
+## 7. Próximos Passos & Melhorias Futuras (Roadmap)
+1. **Calibração de Tolerância do Joystick Virtual (Desconto de Movimento):**
+   - Evitar bloqueios acidentais para "Descer" quando o dedo escorrega ligeiramente na diagonal em vigas onde não há escada (ou no piso mais baixo).
+   - Implementar "zona morta direcional" ou prioridade horizontal quando o jogador se move numa viga contínua, permitindo continuar a andar para o lado com facilidade sem que um deslize mínimo vertical trave o movimento.
+2. **Orientação Automática / Prompt Inteligente de Rotação (Landscape):**
+   - Melhorar o pedido de ecrã inteiro e rotação automática para telemóveis (usando `Screen Orientation API` e modal/prompt elegante quando detetado telemóvel na vertical).
