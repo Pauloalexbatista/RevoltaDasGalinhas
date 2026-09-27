@@ -992,20 +992,21 @@ class ChickenPlayer {
     const hasElevatorShaft = (elevators && elevators.length > 0);
     const inShaftColumn = (this.x + this.w * 0.5 > 335 && this.x + this.w * 0.5 < 435);
 
-    // A. Queda no poço do elevador (Nível 3): perde a vida!
-    if (hasElevatorShaft && inShaftColumn && (this.y + this.h >= 565)) {
-      this.ridingElevator = null;
-      triggerLifeLost();
-      return;
-    }
+    // A. Queda no poço do elevador (Nível 3): qualquer queda no vão entre as plataformas ou abaixo do chão tira a vida!
+    if (hasElevatorShaft) {
+      const midX = this.x + this.w * 0.5;
+      const onLeftGround = (midX >= 25 && midX <= 338);
+      const onRightGround = (midX >= 428 && midX <= 775);
 
-    // B. Chão de segurança fora do poço do elevador
-    if (this.y + this.h > 572) {
-      if (hasElevatorShaft && inShaftColumn) {
+      if ((!onLeftGround && !onRightGround && (this.y + this.h >= 560)) || (this.y > 572)) {
         this.ridingElevator = null;
         triggerLifeLost();
         return;
       }
+    }
+
+    // B. Chão de segurança para níveis normais
+    if (this.y + this.h > 572) {
       this.y = 572 - this.h;
       this.vy = 0;
       this.isGrounded = true;
